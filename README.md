@@ -5,3 +5,4 @@ REST API for NFL Looser Pool game
 
 ## Tools to Troubleshoot...
 * To troubleshoot initial postgres setup ```sudo pkill -u postgres```
+  * I ran this when I got a 'Port 5432 is already in use' error
