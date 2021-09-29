@@ -11,6 +11,7 @@ COPY --from=builder /go/src/github.com/freddysilber/nfl-looser-pool-api/build/nf
 EXPOSE 8080 8080
 ENTRYPOINT ["/usr/bin/nfl-looser-pool-api"]
 
+
 # FROM golang:1.14.6-alpine3.12 as builder
 # COPY go.mod go.sum /go/src/gitlab.com/idoko/bucketeer/
 # WORKDIR /go/src/gitlab.com/idoko/bucketeer
