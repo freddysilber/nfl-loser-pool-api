@@ -31,6 +31,7 @@ func main() {
 	database, err := db.Initialize(dbUser, dbPassword, dbName)
 
 	if err != nil {
+		log.Println(err)
 		log.Fatalf("Could not set up database: %v", err)
 	}
 
