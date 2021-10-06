@@ -5,9 +5,10 @@ REST API for NFL Looser Pool game
 
 ## Tools to Troubleshoot...
 * To troubleshoot initial postgres setup ```sudo pkill -u postgres```
-  * I ran this when I got a 'Port 5432 is already in use' error
+  * I ran this when I got a 'Port 5432 is already in use' error??
 * https://stackoverflow.com/questions/17633422/psql-fatal-database-user-does-not-exist
 
 # Getting Started
 
 * To start the server, run ```docker-compose up --build``` or ```npm run dev```
+* To dig into Postgresql, you can use ```psql```
