@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/fatih/color"
+
 	_ "github.com/lib/pq"
 )
 
@@ -21,6 +23,12 @@ type Database struct {
 }
 
 func Initialize(username, password, database string) (Database, error) {
+    
+    color.Blue("YO")
+    log.Println(username)
+    log.Println(password)
+    log.Println(database)
+
     db := Database{}
     dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
         HOST, PORT, username, password, database)
