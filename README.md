@@ -12,3 +12,7 @@ REST API for NFL Looser Pool game
 
 * To start the server, run ```docker-compose up --build``` or ```npm run dev```
 * To dig into Postgresql, you can use ```psql```
+
+# TODO
+
+* Debug the DB connection... ```go run main.go``` wont even complete
