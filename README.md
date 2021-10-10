@@ -10,6 +10,7 @@ REST API for NFL Looser Pool game
 
 # Getting Started
 
+* You'll need a ```.env``` file with ```POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB``` values
 * To start the server, run ```docker-compose up --build``` or ```npm run dev```
 * To dig into Postgresql, you can use ```psql```
 

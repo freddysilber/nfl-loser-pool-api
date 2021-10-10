@@ -17,7 +17,10 @@ import (
 )
 
 func main() {
+
+	fmt.Println("---------")
 	color.Green("Starting...")
+	
 	addr := ":8080"
 	listener, err := net.Listen("tcp", addr)
 
