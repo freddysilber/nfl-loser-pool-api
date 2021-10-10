@@ -13,7 +13,9 @@ REST API for NFL Looser Pool game
 * You'll need to set up a ```.env``` file to store your PostgreSQL information. Here is an example:
 
 ```
-POSTGRES_USER=my_postgres_user POSTGRES_PASSWORD=my_postgres_users_password POSTGRES_DB=my_postgres_database_name
+POSTGRES_USER=my_postgres_user
+POSTGRES_PASSWORD=my_postgres_users_password
+POSTGRES_DB=my_postgres_database_name
 ```
 
 * To dig into Postgresql, you can use ```psql```
