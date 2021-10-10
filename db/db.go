@@ -22,13 +22,22 @@ type Database struct {
 
 func Initialize(username, password, database string) (Database, error) {
     
-    log.Println("Username --> ",username)
-    log.Println("Password --> ",password)
-    log.Println("Database --> ",database)
+    log.Println("Host --> ", HOST)
+    log.Println("Port --> ", PORT)
+    log.Println("Username --> ", username)
+    log.Println("Password --> ", password)
+    log.Println("Database --> ", database)
 
     db := Database{}
+
+    log.Println("DB? --> ", db)
+
     dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
         HOST, PORT, username, password, database)
+
+    log.Println("DSN --> ", dsn)
+    log.Println("--------")
+
     conn, err := sql.Open("postgres", dsn)
     if err != nil {
         return db, err
