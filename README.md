@@ -10,6 +10,8 @@ REST API for NFL Looser Pool game
 
 # Getting Started
 
+* Install Postgres, Docker, and Go. (The link above should provide that info and if not, please raise an issue)
+
 * You'll need to set up a ```.env``` file to store your PostgreSQL information. Here is an example:
 
 ```
