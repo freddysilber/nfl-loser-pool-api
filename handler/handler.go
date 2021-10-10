@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/freddysilber/nfl-looser-pool-api/db"
@@ -26,6 +27,9 @@ func methodNotAllowedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	// When there is a 400/ or there is a bad request?
+	log.Println("ARE WE HITTING THIS")
+
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(400)
 	render.Render(w, r, ErrNotFound)
