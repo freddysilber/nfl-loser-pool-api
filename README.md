@@ -20,6 +20,10 @@ POSTGRES_DB=my_postgres_database_name
 
 * To dig into Postgresql, you can use ```psql```
 
+* run ```docker-compose up --build``` to launch the api server on port ```8080```
+
+* run ```docker-compose down``` to destroy Docker containers
+
 # TODO
 
 * Debug the DB connection... ```go run main.go``` wont even complete
