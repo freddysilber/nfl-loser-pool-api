@@ -2,6 +2,7 @@ version: "3.7"
 services:
   database:
     image: postgres
+    # restart: unless-stopped
     restart: always
     env_file:
       - .env

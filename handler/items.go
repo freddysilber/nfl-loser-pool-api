@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -58,7 +59,11 @@ func createItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllItems(w http.ResponseWriter, r *http.Request) {
+	log.Println(w)
+	log.Println(r)
 	items, err := dbInstance.GetAllItems()
+	log.Println(items)
+	log.Println("FUCK... We got an error... -->", err)
 	if err != nil {
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
