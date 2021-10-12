@@ -59,8 +59,8 @@ func createItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllItems(w http.ResponseWriter, r *http.Request) {
-	log.Println(w)
-	log.Println(r)
+	log.Println("http.ResponseWriter --> ", w)
+	log.Println("http.Request --> ", r)
 	items, err := dbInstance.GetAllItems()
 	log.Println(items)
 	log.Println("FUCK... We got an error... -->", err)
