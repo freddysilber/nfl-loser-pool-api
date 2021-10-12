@@ -65,10 +65,12 @@ func getAllItems(w http.ResponseWriter, r *http.Request) {
 	log.Println(items)
 	log.Println("FUCK... We got an error... -->", err)
 	if err != nil {
+		log.Println("WE ARE HERE")
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
 	}
 	if err := render.Render(w, r, items); err != nil {
+		log.Println("ARE WE EVEN HERE THO")
 		render.Render(w, r, ErrorRenderer(err))
 	}
 }
