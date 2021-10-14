@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   database:
+    container_name: nfl-looser-pool-database
     image: postgres
     # restart: unless-stopped
     restart: always
@@ -12,6 +13,7 @@ services:
       # - "./database/postgres-data:/var/lib/postgresql/data:rw"
       - data:/var/lib/postgresql/data 
   server:
+    container_name: nfl-looser-pool-server
     build:
       context: .
       dockerfile: Dockerfile
