@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   database:
+  # need netwroks!!
     container_name: nfl-looser-pool-database
     image: postgres
     # restart: unless-stopped
