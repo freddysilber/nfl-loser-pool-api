@@ -33,4 +33,3 @@ POSTGRES_DB=my_postgres_database_name
 # Notes for me
 
 * postgres, postgres, nfl_looser_pool_api_db
-https://firehydrant.io/blog/develop-a-go-app-with-docker-compose/
