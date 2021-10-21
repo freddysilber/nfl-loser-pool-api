@@ -14,6 +14,7 @@ var dbInstance db.Database
 func NewHandler(db db.Database) http.Handler {
 	router := chi.NewRouter()
 	dbInstance = db
+	log.Println("DB_INSTANCE", dbInstance)
 	router.MethodNotAllowed(methodNotAllowedHandler)
 	router.NotFound(notFoundHandler)
 	router.Route("/items", items)

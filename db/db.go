@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	// HOST = "host.docker.internal"
 	HOST = "database"
 	PORT = 5432
 )
@@ -32,6 +33,12 @@ func Initialize(username, password, database string) (Database, error) {
 
 	log.Println("DB? --> ", db)
 
+	// dsn := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
+    //     username,
+    //     password,
+    //     HOST,
+    //     PORT,
+    //     database)
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		HOST, PORT, username, password, database)
 
