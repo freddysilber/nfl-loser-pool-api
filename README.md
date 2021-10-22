@@ -26,14 +26,9 @@ POSTGRES_DB=my_postgres_database_name
 
 * To troubleshoot initial postgres setup ```sudo pkill -u postgres```
   * I ran this when I got a 'Port 5432 is already in use' error??
-  
+
 * [user does not exist](https://stackoverflow.com/questions/17633422/psql-fatal-database-user-does-not-exist)
 
-
-# TODO
-
-* Debug the DB connection... ```go run main.go``` wont even complete
-
-# Notes for me
+## Notes for me
 
 * postgres, postgres, nfl_looser_pool_api_db
