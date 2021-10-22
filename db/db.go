@@ -10,6 +10,7 @@ import (
 
 const (
 	// HOST = "host.docker.internal"
+	// HOST = "localhost"
 	HOST = "database"
 	PORT = 5432
 )

@@ -5,6 +5,10 @@ services:
     container_name: nfl-looser-pool-database
     image: postgres
     restart: always
+    # environment:
+    #   POSTGRES_USER: postgres
+    #   POSTGRES_PASSWORD: postgres
+    #   POSTGRES_DB: nfl_looser_pool_api
     env_file:
       - .env
     ports:
@@ -25,3 +29,7 @@ services:
     - "8080:8080"
 volumes:
   data:
+# networks:
+#   ingress:
+#     name: existing_docker_network
+#     external: true

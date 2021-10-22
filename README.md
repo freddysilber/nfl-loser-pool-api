@@ -14,6 +14,8 @@ POSTGRES_PASSWORD=my_postgres_users_password
 POSTGRES_DB=my_postgres_database_name
 ```
 
+*create schemas ```migrate create -ext sql -dir db/migrations -seq create_items_table```
+
 * To dig into Postgresql, you can use ```psql```
 
 * run ```docker-compose up --build``` to launch the api server on port ```8080```
