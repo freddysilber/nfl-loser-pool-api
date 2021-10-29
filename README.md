@@ -34,3 +34,4 @@ POSTGRES_DB=my_postgres_database_name
 ## Notes for me
 
 * postgres, postgres, nfl_looser_pool_api_db
+* THING=migrate -url postgres://postgres@localhost:5432/nfl_looser_pool_api_db?sslmode=disable&password=postgres
