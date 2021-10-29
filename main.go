@@ -34,6 +34,8 @@ func main() {
 		os.Getenv("POSTGRES_DB")
 
 	database, err := db.Initialize(dbUser, dbPassword, dbName)
+	log.Println("ERROR! --> ", err)
+	log.Println("DATABASE --> ", database)
 
 	if err != nil {
 		log.Println(err)

@@ -47,6 +47,7 @@ func Initialize(username, password, database string) (Database, error) {
 	log.Println("--------")
 
 	conn, err := sql.Open("postgres", dsn)
+	log.Println(conn)
 	if err != nil {
 		return db, err
 	}
