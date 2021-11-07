@@ -11,6 +11,7 @@ func (db Database) GetAllItems() (*models.ItemList, error) {
 	log.Println("db --> ", db)
 	log.Println("db.Conn --> ", db.Conn)
 	list := &models.ItemList{}
+	log.Println("LIST --> ", list)
 	rows, err := db.Conn.Query("SELECT * FROM items ORDER BY ID DESC")
 	log.Println("rows --> ", rows)
 	log.Println("err --> ", err)
