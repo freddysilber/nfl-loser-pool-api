@@ -16,6 +16,17 @@ POSTGRES_DB=my_postgres_database_name
 
 *create schemas ```migrate create -ext sql -dir db/migrations -seq create_items_table```
 
+* Run Database Migrations
+  * Migrate Up
+  ```bash
+  migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations up
+  ```
+
+  * Migrate Down
+  ```bash
+  migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations down
+  ```
+
 * To dig into Postgresql, you can use ```psql```
 
 * run ```docker-compose up --build``` to launch the api server on port ```8080```
@@ -30,26 +41,3 @@ POSTGRES_DB=my_postgres_database_name
   * I ran this when I got a 'Port 5432 is already in use' error??
 
 * [user does not exist](https://stackoverflow.com/questions/17633422/psql-fatal-database-user-does-not-exist)
-
-## Notes for me
-
-* postgres, postgres, nfl_looser_pool_api_db
-* THING=migrate -url postgres://postgres@localhost:5432/nfl_looser_pool_api_db?sslmode=disable&password=postgres
-* docker run --rm -e POSTGRES_USERNAME=postgres -e POSTGRES_PASSWORD=postgres --name postgres -p 5432:5432 postgres
-
-<!-- * THING=migrate -url postgres://postgres@localhost:5432/postgres?sslmode=disable -->
-
-
-postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
-
-### Database Migrations
-
-* Migrate Up
-```bash
-migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations up
-```
-
-* Migrate Down
-```bash
-migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations down
-```
