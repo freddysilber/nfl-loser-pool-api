@@ -1,14 +1,9 @@
 version: "3.7"
 services:
   database:
-  # need netwroks!!
     container_name: nfl-looser-pool-database
     image: postgres
     restart: always
-    # environment:
-    #   POSTGRES_USER: postgres
-    #   POSTGRES_PASSWORD: postgres
-    #   POSTGRES_DB: postgres
     env_file:
       - .env
     ports:
@@ -29,7 +24,3 @@ services:
     - "8080:8080"
 volumes:
   data:
-# networks:
-#   ingress:
-#     name: existing_docker_network
-#     external: true

@@ -34,6 +34,8 @@ func Initialize(username, password, database string) (Database, error) {
 
 	log.Println("DB? --> ", db)
 
+	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	// 	"localhost", 5432, "postgres", "postgres", "postgres")
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		HOST, PORT, username, password, database)
 

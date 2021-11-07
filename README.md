@@ -37,3 +37,7 @@ POSTGRES_DB=my_postgres_database_name
 * THING=migrate -url postgres://postgres@localhost:5432/nfl_looser_pool_api_db?sslmode=disable&password=postgres
 * docker run --rm -e POSTGRES_USERNAME=postgres -e POSTGRES_PASSWORD=postgres --name postgres -p 5432:5432 postgres
 
+<!-- * THING=migrate -url postgres://postgres@localhost:5432/postgres?sslmode=disable -->
+
+
+postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
