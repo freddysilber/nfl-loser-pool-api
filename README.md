@@ -41,3 +41,15 @@ POSTGRES_DB=my_postgres_database_name
 
 
 postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+
+### Database Migrations
+
+* Migrate Up
+```bash
+migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations up
+```
+
+* Migrate Down
+```bash
+migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations down
+```
