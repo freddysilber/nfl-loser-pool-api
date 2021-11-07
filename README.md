@@ -12,10 +12,11 @@ REST API for NFL Looser Pool game
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=postgres
-POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 DB_HOST=host.docker.internal
+
+export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 ```
-> Note: POSTGRES_URL is not being used in the program
+> Note: POSTGRESQL_URL is not being used in the program, but we can reference this variable in out db migration commands
 
 *create schemas ```migrate create -ext sql -dir db/migrations -seq create_items_table```
 
@@ -24,6 +25,11 @@ DB_HOST=host.docker.internal
   ```bash
   migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations up
   ```
+  or
+  ```bash
+  migrate -database ${POSTGRESQL_URL} -path db/migrations up
+  ```
+
 
   * Migrate Down
   ```bash
