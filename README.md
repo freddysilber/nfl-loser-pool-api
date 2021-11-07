@@ -16,7 +16,7 @@ DB_HOST=host.docker.internal
 
 export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 ```
-> Note: POSTGRESQL_URL is not being used in the program, but we can reference this variable in out db migration commands
+> Note: POSTGRESQL_URL is not being used in the program, but we can reference this variable in our db migration commands
 
 *create schemas ```migrate create -ext sql -dir db/migrations -seq create_items_table```
 
@@ -27,6 +27,7 @@ export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslm
   ```
   or
   ```bash
+  export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
   migrate -database ${POSTGRESQL_URL} -path db/migrations up
   ```
 
