@@ -14,9 +14,9 @@ type ErrorResponse struct {
 }
 
 var (
-	ErrMethodNotAllowed = &ErrorResponse{StatusCode: 405, Message: "Method not allowed"}
-	ErrNotFound         = &ErrorResponse{StatusCode: 404, Message: "Resource not found"}
-	ErrBadRequest       = &ErrorResponse{StatusCode: 400, Message: "Bad request"}
+	ErrMethodNotAllowed = &ErrorResponse{StatusCode: 405, Message: "Method not allowed, (405)"}
+	ErrNotFound         = &ErrorResponse{StatusCode: 404, Message: "Error! Resource not found. (404)"}
+	ErrBadRequest       = &ErrorResponse{StatusCode: 400, Message: "Bad request, (400)"}
 )
 
 func (e *ErrorResponse) Render(w http.ResponseWriter, r *http.Request) error {

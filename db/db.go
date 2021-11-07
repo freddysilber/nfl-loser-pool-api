@@ -9,9 +9,7 @@ import (
 )
 
 const (
-	// HOST = "host.docker.internal"
-	// HOST = "localhost"
-	HOST = "database"
+	// HOST = "database"
 	PORT = 5432
 )
 
@@ -22,28 +20,26 @@ type Database struct {
 	Conn *sql.DB
 }
 
-func Initialize(username, password, database string) (Database, error) {
+func Initialize(username, password, database string, host string) (Database, error) {
 
-	log.Println("Host --> ", HOST)
+	log.Println(" --- DATABASE CONNECTION ARGUMENTS ---")
+	/*
+	Using 'host.docker.internal' from .env currently. we might also use 'database' or 'localhost' here.
+	localhost: use this value outside of the docker environment. ie. 'go run main.go' context
+	 */
+	log.Println("Host --> ", host)
 	log.Println("Port --> ", PORT)
 	log.Println("Username --> ", username)
 	log.Println("Password --> ", password)
 	log.Println("Database --> ", database)
+	log.Println("------------------------------------------------------")
 
 	db := Database{}
 
-	log.Println("DB? --> ", db)
-
-	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-	// 	"localhost", 5432, "postgres", "postgres", "postgres")
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		HOST, PORT, username, password, database)
-
-	log.Println("DSN --> ", dsn)
-	log.Println("--------")
+		host, PORT, username, password, database)
 
 	conn, err := sql.Open("postgres", dsn)
-	log.Println(conn)
 	if err != nil {
 		return db, err
 	}
