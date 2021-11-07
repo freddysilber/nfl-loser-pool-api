@@ -15,6 +15,7 @@ POSTGRES_DB=postgres
 POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 DB_HOST=host.docker.internal
 ```
+> Note: POSTGRES_URL is not being used in the program
 
 *create schemas ```migrate create -ext sql -dir db/migrations -seq create_items_table```
 
