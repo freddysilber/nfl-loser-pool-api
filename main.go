@@ -28,17 +28,15 @@ func main() {
 		log.Fatalf("Error occurred: %s", err.Error())
 	}
 
-	dbUser, dbPassword, dbName :=
+	dbUser, dbPassword, dbName, dbHost :=
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB")
+		os.Getenv("POSTGRES_DB"),
+		os.Getenv("DB_HOST")
 
-	database, err := db.Initialize(dbUser, dbPassword, dbName)
-	log.Println("ERROR! --> ", err)
-	log.Println("DATABASE --> ", database)
+	database, err := db.Initialize(dbUser, dbPassword, dbName, dbHost)
 
 	if err != nil {
-		log.Println(err)
 		log.Fatalf("Could not set up database: %v", err)
 	}
 
