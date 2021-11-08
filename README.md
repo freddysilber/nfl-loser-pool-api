@@ -43,6 +43,16 @@ export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslm
 
 * run ```docker-compose down``` to destroy Docker containers
 
+* Create a sample item 
+```bash
+curl -X POST http://localhost:8080/items -H "Content-type: application/json" -d '{ "name": "swim across the River Benue", "description": "ho ho ho"}'
+```
+
+* Get all items
+```bash
+curl http://localhost:8080/items
+```
+
 ## References and Tools
 
 * [Tutorial for reference](https://blog.logrocket.com/how-to-build-a-restful-api-with-docker-postgresql-and-go-chi/)
