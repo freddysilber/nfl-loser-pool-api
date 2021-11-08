@@ -13,6 +13,7 @@ var dbInstance db.Database
 
 func NewHandler(db db.Database) http.Handler {
 	router := chi.NewRouter()
+	
 	router.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"https://*", "http://*"},
@@ -23,9 +24,13 @@ func NewHandler(db db.Database) http.Handler {
 		AllowCredentials: false,
 		// MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
+	
 	dbInstance = db
+
 	router.MethodNotAllowed(methodNotAllowedHandler)
 	router.NotFound(notFoundHandler)
+
+	// Register model specific route handlers
 	router.Route("/items", items)
 	router.Route("/users", users)
 	return router
