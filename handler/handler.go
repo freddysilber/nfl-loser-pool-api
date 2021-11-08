@@ -27,6 +27,7 @@ func NewHandler(db db.Database) http.Handler {
 	router.MethodNotAllowed(methodNotAllowedHandler)
 	router.NotFound(notFoundHandler)
 	router.Route("/items", items)
+	router.Route("/users", users)
 	return router
 }
 
