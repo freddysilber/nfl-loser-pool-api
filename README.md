@@ -40,6 +40,7 @@ export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslm
 * To dig into Postgresql, you can use ```psql```
 
 * run ```docker-compose up --build``` to launch the api server on port ```8080```
+  > Before you run this command, be sure your local postgres server is running using the postgres app
 
 * run ```docker-compose down``` to destroy Docker containers
 
