@@ -62,3 +62,5 @@ curl http://localhost:8080/items
   * I ran this when I got a 'Port 5432 is already in use' error??
 
 * [user does not exist](https://stackoverflow.com/questions/17633422/psql-fatal-database-user-does-not-exist)
+
+* [Deployment Guide](https://dev.to/wati_fe/how-i-setup-golang-on-docker-and-deploy-it-to-heroku-343e)
