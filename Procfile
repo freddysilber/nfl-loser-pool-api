@@ -1,0 +1,1 @@
+web: bin/nfl-looser-pool-api
