@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -12,11 +13,13 @@ import (
 )
 
 type userIdKeyString string
+
 var userIDKey userIdKeyString = "userID"
 
 func users(router chi.Router) {
 	router.Get("/", getAllUsers)
-	router.Post("/", createUser)
+	router.Post("/signup", SignUp)
+	router.Post("/login", LogIn)
 	router.Route("/{userId}", func(router chi.Router) {
 		router.Use(UserContext)
 	})
@@ -38,13 +41,13 @@ func UserContext(next http.Handler) http.Handler {
 	})
 }
 
-func createUser(w http.ResponseWriter, r *http.Request) {
+func SignUp(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	if err := render.Bind(r, user); err != nil {
 		render.Render(w, r, ErrBadRequest)
 		return
 	}
-	if err := dbInstance.AddUser(user); err != nil {
+	if err := dbInstance.SignUp(user); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 		return
 	}
@@ -52,6 +55,28 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
 	}
+}
+
+func LogIn(w http.ResponseWriter, r *http.Request) {
+	user := &models.User{}
+	if err := render.Bind(r, user); err != nil {
+		render.Render(w, r, ErrBadRequest)
+		return
+	}
+
+	row, err := dbInstance.GetUserByUsernameAndPassword(user)
+
+	if err != nil {
+		log.Println("ROW", row)
+		render.Render(w, r, ErrorRenderer(err))
+		return
+	}
+	if err := render.Render(w, r, user); err != nil {
+		render.Render(w, r, ServerErrorRenderer(err))
+		return
+	}
+	log.Println("MADE IT")
+	// passwordVerified, msg := dbInstance.VerifyPassword(row.Password, user.Password)
 }
 
 func getAllUsers(w http.ResponseWriter, r *http.Request) {

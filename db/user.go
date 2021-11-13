@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
@@ -37,22 +38,13 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 	return list, nil
 }
 
-func (db Database) AddUser(user *models.User) error {
-	hashedAndSalted, err := GeneratehashPassword(user.Password)
-	user.Password = hashedAndSalted
-
-	if err != nil {
-		log.Fatalln("error in password hash")
-	}
-
-	user.TokenHash, err = GenerateJWT(user.Username)
-
-	if err != nil {
-		log.Fatalln("error creating JWT")
-	}
+func (db Database) SignUp(user *models.User) error {
+	user.Password = GeneratehashPassword(user.Password)
+	user.TokenHash = GenerateJWT(user.Username)
 
 	var id int
 	var createdAt string
+
 	query := `INSERT INTO users (
 		username, 
 		password, 
@@ -60,7 +52,8 @@ func (db Database) AddUser(user *models.User) error {
 		first_name, 
 		last_name
 	) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
-	err = db.Conn.QueryRow(
+
+	err := db.Conn.QueryRow(
 		query,
 		user.Username,
 		user.Password,
@@ -76,13 +69,39 @@ func (db Database) AddUser(user *models.User) error {
 	return nil
 }
 
-func GeneratehashPassword(password string) (string, error) {
+func (db Database) GetUserByUsernameAndPassword(user *models.User) (*models.User, error) {
+	log.Println("User username --> ", user.Username)
+	query := `SELECT * FROM users WHERE username = $1`
+	row := db.Conn.QueryRow(query, user.Username)
+	log.Println("Queried User", row)	
+	switch err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.FirstName,
+		&user.LastName,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.TokenHash,
+	); err {
+	case sql.ErrNoRows:
+		return user, ErrNoMatch
+	default:
+		return user, err
+	}
+}
+
+// HashPassword is used to encrypt the password before it is stored in the DB
+func GeneratehashPassword(password string) string {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(bytes), err
+	if err != nil {
+		log.Panic(err)
+	}
+	return string(bytes)
 }
 
 var secretkey = "mySuperSecretKey" // put this in the .env file
-func GenerateJWT(username string) (string, error) {
+func GenerateJWT(username string) string {
 	var mySigningKey = []byte(secretkey)
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
@@ -95,7 +114,21 @@ func GenerateJWT(username string) (string, error) {
 
 	if err != nil {
 		fmt.Errorf("Something Went Wrong: %s", err.Error())
-		return "", err
+		return ""
 	}
-	return tokenString, nil
+	return tokenString
+}
+
+// VerifyPassword checks the input password while verifying it with the passward in the DB.
+func VerifyPassword(userPassword string, providedPassword string) (bool, string) {
+	err := bcrypt.CompareHashAndPassword([]byte(providedPassword), []byte(userPassword))
+	check := true
+	msg := ""
+
+	if err != nil {
+		msg = fmt.Sprintf("login or passowrd is incorrect")
+		check = false
+	}
+
+	return check, msg
 }
