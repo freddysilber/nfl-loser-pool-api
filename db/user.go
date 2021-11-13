@@ -1,6 +1,10 @@
 package db
 
-import "github.com/freddysilber/nfl-looser-pool-api/models"
+import (
+	"log"
+
+	"github.com/freddysilber/nfl-looser-pool-api/models"
+)
 
 func (db Database) GetAllUsers() (*models.UserList, error) {
 	list := &models.UserList{}
@@ -17,4 +21,18 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 		list.Users = append(list.Users, user)
 	}
 	return list, nil
+}
+
+func (db Database) AddUser(user *models.User) error {
+	log.Println(user)
+	var id int
+	var createdAt string
+	query := `INSERT INTO users (username) VALUES ($1) RETURNING id, created_at`
+	err := db.Conn.QueryRow(query, user.Username).Scan(&id, &createdAt)
+	if err != nil {
+		return err
+	}
+	user.ID = id
+	user.CreatedAt = createdAt
+	return nil
 }
