@@ -12,7 +12,8 @@ import (
 	"github.com/go-chi/render"
 )
 
-var itemIDKey = "itemID"
+type itemIdKeyString string
+var itemIDKey itemIdKeyString = "itemID"
 
 func items(router chi.Router) {
 	router.Get("/", getAllItems)

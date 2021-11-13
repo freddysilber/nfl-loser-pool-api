@@ -3,7 +3,6 @@ package models
 import (
 	"fmt"
 	"net/http"
-	"time"
 )
 
 type User struct {
@@ -15,8 +14,9 @@ type User struct {
 	LastName  string    `json:"lastName" sql:"last_name"`
 	TokenHash string    `json:"tokenhash" sql:"token_hash"`
 	CreatedAt string `json:"createdat" sql:"created_at"`
+	UpdatedAt string `json:"updatedat" sql:"updated_at"`
 	// CreatedAt time.Time `json:"createdat" sql:"created_at"`
-	UpdatedAt time.Time `json:"updatedat" sql:"updated_at"`
+	// UpdatedAt time.Time `json:"updatedat" sql:"updated_at"`
 }
 
 type UserList struct {

@@ -11,7 +11,8 @@ import (
 	"github.com/go-chi/render"
 )
 
-var userIDKey = "userID"
+type userIdKeyString string
+var userIDKey userIdKeyString = "userID"
 
 func users(router chi.Router) {
 	router.Get("/", getAllUsers)
