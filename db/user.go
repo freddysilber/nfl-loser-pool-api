@@ -19,8 +19,8 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 	for rows.Next() {
 		var user models.User
 		err := rows.Scan(
-			&user.ID, 
-			&user.Username, 
+			&user.ID,
+			&user.Username,
 			// &user.Email,
 			&user.FirstName,
 			&user.LastName,
@@ -44,7 +44,7 @@ func (db Database) AddUser(user *models.User) error {
 	if err != nil {
 		log.Fatalln("error in password hash")
 	}
-	
+
 	user.TokenHash, err = GenerateJWT(user.Username)
 
 	if err != nil {
@@ -61,13 +61,13 @@ func (db Database) AddUser(user *models.User) error {
 		last_name
 	) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
 	err = db.Conn.QueryRow(
-		query, 
-		user.Username, 
-		user.Password, 
-		user.TokenHash, 
-		user.FirstName, 
+		query,
+		user.Username,
+		user.Password,
+		user.TokenHash,
+		user.FirstName,
 		user.LastName,
-		).Scan(&id, &createdAt)
+	).Scan(&id, &createdAt)
 	if err != nil {
 		return err
 	}
