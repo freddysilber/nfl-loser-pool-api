@@ -11,6 +11,8 @@ type User struct {
 	Email     string    `json:"email" validate:"required" sql:"email"`
 	Password  string    `json:"password" validate:"required" sql:"password"`
 	Username  string    `json:"username" sql:"username"`
+	FirstName  string    `json:"firstName" sql:"first_name"`
+	LastName  string    `json:"lastName" sql:"last_name"`
 	TokenHash string    `json:"tokenhash" sql:"tokenhash"`
 	CreatedAt time.Time `json:"createdat" sql:"created_at"`
 	UpdatedAt time.Time `json:"updatedat" sql:"updated_at"`

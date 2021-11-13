@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS users(
 	id VARCHAR(36) NOT NULL,
 	email VARCHAR(225) NOT NULL unique,
 	username VARCHAR(225),
+	firstname VARCHAR(225),
+	lastname VARCHAR(225),
 	password VARCHAR(225) NOT NULL,
 	tokenhash VARCHAR(15) NOT NULL,
 	createdat TIMESTAMP NOT NULL,
