@@ -23,14 +23,14 @@ func users(router chi.Router) {
 
 func UserContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		itemId := chi.URLParam(r, "itemId")
-		if itemId == "" {
-			render.Render(w, r, ErrorRenderer(fmt.Errorf("item ID is required")))
+		userId := chi.URLParam(r, "userId")
+		if userId == "" {
+			render.Render(w, r, ErrorRenderer(fmt.Errorf("user ID is required")))
 			return
 		}
-		id, err := strconv.Atoi(itemId)
+		id, err := strconv.Atoi(userId)
 		if err != nil {
-			render.Render(w, r, ErrorRenderer(fmt.Errorf("invalid item ID")))
+			render.Render(w, r, ErrorRenderer(fmt.Errorf("invalid user ID")))
 		}
 		ctx := context.WithValue(r.Context(), userIDKey, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
