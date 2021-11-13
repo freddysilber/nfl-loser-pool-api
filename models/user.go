@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	ID        int    `json:"id" sql:"id"`
-	Email     string    `json:"email" validate:"required" sql:"email"`
+	// Email     string    `json:"email" validate:"required" sql:"email"`
 	Password  string    `json:"password" validate:"required" sql:"password"`
 	Username  string    `json:"username" sql:"username"`
 	FirstName  string    `json:"firstName" sql:"first_name"`

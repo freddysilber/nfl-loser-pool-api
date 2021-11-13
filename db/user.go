@@ -18,7 +18,17 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 	}
 	for rows.Next() {
 		var user models.User
-		err := rows.Scan(&user.ID, &user.Username, &user.Email)
+		err := rows.Scan(
+			&user.ID, 
+			&user.Username, 
+			// &user.Email,
+			&user.FirstName,
+			&user.LastName,
+			&user.Password,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+			&user.TokenHash,
+		)
 		if err != nil {
 			return list, err
 		}
@@ -28,25 +38,36 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 }
 
 func (db Database) AddUser(user *models.User) error {
-	var err error
-	log.Println(user)
-	log.Println("Password", user.Password)    // Hash and salt this
-	log.Println("Token Hash", user.TokenHash) // Generate a new JWT
-	user.Password, err = GeneratehashPassword(user.Password)
-	log.Println("Hashed and Salted Password", user.Password) // Hash and salt this
+	hashedAndSalted, err := GeneratehashPassword(user.Password)
+	user.Password = hashedAndSalted
 
 	if err != nil {
 		log.Fatalln("error in password hash")
 	}
-	user.TokenHash, err = GenerateJWT(user.Email)
+	
+	user.TokenHash, err = GenerateJWT(user.Username)
+
 	if err != nil {
 		log.Fatalln("error creating JWT")
 	}
-	log.Println("Token Hash", user.TokenHash) // Generate a new JWT
+
 	var id int
 	var createdAt string
-	query := `INSERT INTO users (username, email, password, token_hash) VALUES ($1, $2, $3, $4) RETURNING id, created_at`
-	err = db.Conn.QueryRow(query, user.Username, user.Email, user.Password, user.TokenHash).Scan(&id, &createdAt)
+	query := `INSERT INTO users (
+		username, 
+		password, 
+		token_hash, 
+		first_name, 
+		last_name
+	) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
+	err = db.Conn.QueryRow(
+		query, 
+		user.Username, 
+		user.Password, 
+		user.TokenHash, 
+		user.FirstName, 
+		user.LastName,
+		).Scan(&id, &createdAt)
 	if err != nil {
 		return err
 	}
@@ -61,13 +82,13 @@ func GeneratehashPassword(password string) (string, error) {
 }
 
 var secretkey = "mySuperSecretKey" // put this in the .env file
-func GenerateJWT(email string) (string, error) {
+func GenerateJWT(username string) (string, error) {
 	var mySigningKey = []byte(secretkey)
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 
 	claims["authorized"] = true
-	claims["email"] = email
+	claims["username"] = username
 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 
 	tokenString, err := token.SignedString(mySigningKey)
@@ -78,22 +99,3 @@ func GenerateJWT(email string) (string, error) {
 	}
 	return tokenString, nil
 }
-
-// func GenerateJWT(email, role string) (string, error) {
-// 	var mySigningKey = []byte(secretkey)
-// 	token := jwt.New(jwt.SigningMethodHS256)
-// 	claims := token.Claims.(jwt.MapClaims)
-
-// 	claims["authorized"] = true
-// 	claims["email"] = email
-// 	claims["role"] = role
-// 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
-
-// 	tokenString, err := token.SignedString(mySigningKey)
-
-// 	if err != nil {
-// 		fmt.Errorf("Something Went Wrong: %s", err.Error())
-// 		return "", err
-// 	}
-// 	return tokenString, nil
-// }

@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS users(
 	id SERIAL PRIMARY KEY,
-	email VARCHAR(225) NOT NULL unique,
+	-- email VARCHAR(225) NOT NULL unique,
 	username VARCHAR(225) NOT NULL unique,
-	first_name VARCHAR(225),
-	last_name VARCHAR(225),
+	first_name VARCHAR(225) NOT NULL,
+	last_name VARCHAR(225) NOT NULL,
 	password VARCHAR(225) NOT NULL,
 	token_hash VARCHAR(500) NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
