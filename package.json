@@ -4,7 +4,8 @@
   "description": "api for nfl-looser-pool game",
   "main": "index.js",
   "scripts": {
-    "dev": "docker-compose up --build"
+    "dev": "docker-compose up --build",
+    "kill-postgres": "sudo pkill -u postgres"
   },
   "repository": {
     "type": "git",
