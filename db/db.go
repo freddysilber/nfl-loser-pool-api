@@ -20,6 +20,7 @@ type Database struct {
 	Conn *sql.DB
 }
 
+// Connect to the Database
 func Initialize(username, password, database string, host string) (Database, error) {
 
 	log.Println(" --- DATABASE CONNECTION ARGUMENTS ---")
@@ -32,22 +33,33 @@ func Initialize(username, password, database string, host string) (Database, err
 	log.Println("Username --> ", username)
 	log.Println("Password --> ", password)
 	log.Println("Database --> ", database)
-	log.Println("------------------------------------------------------")
 
 	db := Database{}
 
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, PORT, username, password, database)
+	dsn := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, PORT, username, password, database,
+	)
 
 	conn, err := sql.Open("postgres", dsn)
+	
 	if err != nil {
 		return db, err
 	}
+	
 	db.Conn = conn
 	err = db.Conn.Ping()
+
 	if err != nil {
 		return db, err
 	}
-	log.Println("-----------DATABASE CONNECTION ESTABLISHED-----------")
+
+	dbConnectionSuccess()
 	return db, nil
+}
+
+func dbConnectionSuccess() {
+	log.Println("------------------------------------------------------")
+	log.Println("------------DATABASE CONNECTION ESTABLISHED-----------")
+	log.Println("------------------------------------------------------")
 }

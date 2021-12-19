@@ -6,6 +6,10 @@ REST API for NFL Looser Pool game
 
 * Install Postgres, Docker, and Go.
 
+* Install the Docker app launch it
+
+* Install the Postgres app and launch it using port 5432
+
 * You'll need to set up a ```.env``` file to store your PostgreSQL information. Here is an example:
 
 ```

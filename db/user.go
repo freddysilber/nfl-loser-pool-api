@@ -38,6 +38,17 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 	return list, nil
 }
 
+func (db Database) DeleteUser(userId int) error {
+	query := `DELETE FROM users WHERE id = $1;`
+	_, err := db.Conn.Exec(query, userId)
+	switch err {
+	case sql.ErrNoRows:
+		return ErrNoMatch
+	default:
+		return err
+	}
+}
+
 func (db Database) SignUp(user *models.User) error {
 	user.Password = GeneratehashPassword(user.Password)
 	user.TokenHash = GenerateJWT(user.Username)
@@ -73,7 +84,7 @@ func (db Database) GetUserByUsernameAndPassword(user *models.User) (*models.User
 	log.Println("User username --> ", user.Username)
 	query := `SELECT * FROM users WHERE username = $1`
 	row := db.Conn.QueryRow(query, user.Username)
-	log.Println("Queried User", row)	
+	log.Println("Queried User", row)
 	switch err := row.Scan(
 		&user.ID,
 		&user.Username,
