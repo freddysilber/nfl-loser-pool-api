@@ -23,6 +23,7 @@ func users(router chi.Router) {
 	router.Post("/login", logIn)
 	router.Route("/{userId}", func(router chi.Router) {
 		router.Use(UserContext)
+		router.Get("/", getUser)
 		router.Delete("/", deleteUser)
 	})
 }
@@ -58,6 +59,11 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
 	}
+	cookie    :=    http.Cookie{ Name: "token", Value: user.TokenHash }
+	log.Println(cookie)
+	log.Println("set cookie?")
+	http.SetCookie(w, &cookie)
+	// cookie    :=    http.Cookie{Name: "csrftoken",Value:"abcd",Expires:expiration}
 }
 
 func logIn(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +84,30 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
 	}
+
+	// cookie    :=    http.Cookie{ Name: "token", Value: user.TokenHash }
+	// log.Println(cookie)
+	// log.Println("set cookie?")
+	// http.SetCookie(w, &cookie)
 	log.Println("MADE IT")
 	// passwordVerified, msg := dbInstance.VerifyPassword(row.Password, user.Password)
+}
+
+func getUser(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value(userIDKey).(int)
+	user, err := dbInstance.GetUserById(userId)
+	if err != nil {
+		if err == db.ErrNoMatch {
+			render.Render(w, r, ErrNotFound)
+		} else {
+			render.Render(w, r, ErrorRenderer(err))
+		}
+		return
+	}
+	if err := render.Render(w, r, &user); err != nil {
+		render.Render(w, r, ServerErrorRenderer(err))
+		return
+	}
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {

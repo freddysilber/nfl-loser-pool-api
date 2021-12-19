@@ -19,6 +19,7 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 	}
 	for rows.Next() {
 		var user models.User
+		// err := scanUser(user, rows)
 		err := rows.Scan(
 			&user.ID,
 			&user.Username,
@@ -26,9 +27,9 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 			&user.FirstName,
 			&user.LastName,
 			&user.Password,
+			&user.TokenHash,
 			&user.CreatedAt,
 			&user.UpdatedAt,
-			&user.TokenHash,
 		)
 		if err != nil {
 			return list, err
@@ -36,6 +37,27 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 		list.Users = append(list.Users, user)
 	}
 	return list, nil
+}
+
+func (db Database) GetUserById(userId int) (models.User, error) {
+	user := models.User{}
+	query := `SELECT * FROM users WHERE id = $1;`
+	row := db.Conn.QueryRow(query, userId)
+	switch err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.FirstName,
+		&user.LastName,
+		&user.Password,
+		&user.TokenHash,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	); err {
+	case sql.ErrNoRows:
+		return user, ErrNoMatch
+	default:
+		return user, err
+	}
 }
 
 func (db Database) DeleteUser(userId int) error {
@@ -91,9 +113,9 @@ func (db Database) GetUserByUsernameAndPassword(user *models.User) (*models.User
 		&user.FirstName,
 		&user.LastName,
 		&user.Password,
+		&user.TokenHash,
 		&user.CreatedAt,
 		&user.UpdatedAt,
-		&user.TokenHash,
 	); err {
 	case sql.ErrNoRows:
 		return user, ErrNoMatch
@@ -145,3 +167,17 @@ func VerifyPassword(userPassword string, providedPassword string) (bool, string)
 
 	return check, msg
 }
+
+// func scanUser(user models.User, rows *sql.Rows) error {
+// 	return rows.Scan(
+// 		&user.ID,
+// 		&user.Username,
+// 		// &user.Email,
+// 		&user.FirstName,
+// 		&user.LastName,
+// 		&user.Password,
+// 		&user.TokenHash,
+// 		&user.CreatedAt,
+// 		&user.UpdatedAt,
+// 	);
+// }
