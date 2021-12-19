@@ -137,7 +137,9 @@ func VerifyPassword(userPassword string, providedPassword string) (bool, string)
 	msg := ""
 
 	if err != nil {
-		msg = fmt.Sprintf("login or passowrd is incorrect")
+		msg = "login or passowrd is incorrect"
+		// msg = fmt.Sprintf("login or passowrd is incorrect")
+		// msg = fmt.Sprintf("login or passowrd is incorrect %d", 100)
 		check = false
 	}
 
