@@ -35,7 +35,6 @@ export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslm
   migrate -database ${POSTGRESQL_URL} -path db/migrations up
   ```
 
-
   * Migrate Down
   ```bash
   migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations down
@@ -61,6 +60,9 @@ curl http://localhost:8080/items
 ## Scripts
 * ```dev``` - starts the local docker container for local dev
 * ```kill-postgres``` kills postgres running ports / servers
+* ```db:down``` - drops the database
+* ```db:up``` - runs database migrations
+* ``` db:down:up:dev``` - drops the database, runs migrations and starts the docker container / server
 
 ## References and Tools
 
