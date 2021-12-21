@@ -2,7 +2,7 @@
 
 REST API for NFL Looser Pool game
 
-# Getting Started
+## Getting Started
 
 * Install Postgres, Docker, and Go.
 
@@ -22,7 +22,7 @@ export POSTGRESQL_URL="postgres://postgres:postgres@localhost:5432/postgres?sslm
 ```
 > Note: POSTGRESQL_URL is not being used in the program, but we can reference this variable in our db migration commands
 
-*create schemas ```migrate create -ext sql -dir db/migrations -seq create_items_table```
+* create schemas ```migrate create -ext sql -dir db/migrations -seq create_items_table```
 
 * Run Database Migrations
   * Migrate Up
@@ -57,6 +57,10 @@ curl -X POST http://localhost:8080/items -H "Content-type: application/json" -d 
 ```bash
 curl http://localhost:8080/items
 ```
+
+## Scripts
+* ```dev``` - starts the local docker container for local dev
+* ```kill-postgres``` kills postgres running ports / servers
 
 ## References and Tools
 
