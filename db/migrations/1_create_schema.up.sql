@@ -1,3 +1,12 @@
+-- Create Items table
+CREATE TABLE IF NOT EXISTS items(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(100) NOT NULL,
+	description TEXT,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create Users table
 CREATE TABLE IF NOT EXISTS users(
 	id SERIAL PRIMARY KEY,
 	-- email VARCHAR(225) NOT NULL unique,
