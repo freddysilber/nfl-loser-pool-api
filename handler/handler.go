@@ -33,6 +33,7 @@ func NewHandler(db db.Database) http.Handler {
 	// Register model specific route handlers
 	router.Route("/items", items)
 	router.Route("/users", users)
+	router.Route("/session", session)
 	return router
 }
 
