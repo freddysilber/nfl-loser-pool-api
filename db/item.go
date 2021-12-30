@@ -14,7 +14,7 @@ func (db Database) GetAllItems() (*models.ItemList, error) {
 	}
 	for rows.Next() {
 		var item models.Item
-		err := rows.Scan(&item.ID, &item.Name, &item.Description, &item.CreatedAt)
+		err := rows.Scan(&item.Id, &item.Name, &item.Description, &item.OwnerId, &item.CreatedAt)
 		if err != nil {
 			return list, err
 		}
@@ -31,7 +31,7 @@ func (db Database) AddItem(item *models.Item) error {
 	if err != nil {
 		return err
 	}
-	item.ID = id
+	item.Id = id
 	item.CreatedAt = createdAt
 	return nil
 }
@@ -40,7 +40,7 @@ func (db Database) GetItemById(itemId int) (models.Item, error) {
 	item := models.Item{}
 	query := `SELECT * FROM items WHERE id = $1;`
 	row := db.Conn.QueryRow(query, itemId)
-	switch err := row.Scan(&item.ID, &item.Name, &item.Description, &item.CreatedAt); err {
+	switch err := row.Scan(&item.Id, &item.Name, &item.Description, &item.CreatedAt); err {
 	case sql.ErrNoRows:
 		return item, ErrNoMatch
 	default:
@@ -62,7 +62,7 @@ func (db Database) DeleteItem(itemId int) error {
 func (db Database) UpdateItem(itemId int, itemData models.Item) (models.Item, error) {
 	item := models.Item{}
 	query := `UPDATE items SET name=$1, description=$2 WHERE id=$3 RETURNING id, name, description, created_at;`
-	err := db.Conn.QueryRow(query, itemData.Name, itemData.Description, itemId).Scan(&item.ID, &item.Name, &item.Description, &item.CreatedAt)
+	err := db.Conn.QueryRow(query, itemData.Name, itemData.Description, itemId).Scan(&item.Id, &item.Name, &item.Description, &item.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return item, ErrNoMatch
