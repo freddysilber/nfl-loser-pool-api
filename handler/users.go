@@ -94,6 +94,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		Name:    sessionToken,
 		Value:   tokenString,
 		Expires: expirationTime,
+		Path: "/",
 	}
 	http.SetCookie(w, &cookie)
 

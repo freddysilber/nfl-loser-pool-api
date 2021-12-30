@@ -125,18 +125,13 @@ func (db Database) SignUp(user *models.User) error {
 
 func (db Database) GetUserByUsernameAndPassword(user *models.User) (*models.User, error) {
 	log.Println("User username --> ", user.Username)
-	query := `SELECT * FROM users WHERE username = $1`
+	query := `SELECT id, username, password FROM users WHERE username = $1`
 	row := db.Conn.QueryRow(query, user.Username)
 	log.Println("Queried User", row)
 	switch err := row.Scan(
 		&user.Id,
 		&user.Username,
-		// &user.FirstName,
-		// &user.LastName,
 		&user.Password,
-		// &user.TokenHash,
-		// &user.CreatedAt,
-		// &user.UpdatedAt,
 	); err {
 	case sql.ErrNoRows:
 		return user, ErrNoMatch
