@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,14 +12,23 @@ import (
 	"github.com/freddysilber/nfl-looser-pool-api/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userIdKeyString string
 
 // Claims struct for jwt token contents
 type Claims struct {
+	Id int `json:"id"`// User Id
 	Username string `json:"username"`
+	Password string `json:"password"`
 	jwt.StandardClaims
+}
+
+// Credentials struct for demarshalling session post body
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 // cookie key
@@ -34,7 +42,6 @@ func users(router chi.Router) {
 	router.Get("/", getAllUsers)
 	router.Post("/signup", signUp)
 	router.Post("/login", logIn)
-	router.Delete("/logout", logout)
 	router.Route("/{userId}", func(router chi.Router) {
 		router.Use(UserContext)
 		router.Get("/", getUser)
@@ -66,7 +73,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	if err := dbInstance.SignUp(user); err != nil {
+	if err := dbInstance.NewUser(user); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 		return
 	}
@@ -75,6 +82,8 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	expirationTime := time.Now().Add(60 * time.Minute)
 	claims := &Claims{
 		Username: user.Username,
+		Id: user.Id,
+		Password: user.Password,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -107,41 +116,55 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 func logIn(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	if err := render.Bind(r, user); err != nil {
-		render.Render(w, r, ErrBadRequest)
+		render.Render(w, r, ErrBadRequest);
 		return
 	}
-
-	row, err := dbInstance.GetUserByUsernameAndPassword(user)
-
+	var providedPassword = user.Password
+	
+	user, err := dbInstance.GetUserByUsername(user)
 	if err != nil {
-		log.Println("ROW", row)
-		render.Render(w, r, ErrorRenderer(err))
+		render.Render(w, r, ErrNotFound)
 		return
 	}
-	if err := render.Render(w, r, user); err != nil {
+	if user == nil {
+		w.WriteHeader(401) // Unauthorized
+		return
+	}
+
+	err = verifyPassword(user.Password, []byte(providedPassword))
+	if err != nil {
+		w.WriteHeader(401)
+		return
+	}
+
+	// create jwt token
+	expirationTime := time.Now().Add(60 * time.Minute)
+	claims := &Claims{
+		Username: user.Username,
+		Id: user.Id,
+		Password: user.Password,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	// sign token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
 	}
-}
 
-// // logs out user by invalidating session token
-// func handleMethodDelete(ctx *fasthttp.RequestCtx) error {
-// var c fasthttp.Cookie
-// c.SetKey(sessionToken)
-// c.SetValue("")
-// c.SetExpire(time.Now())
-// ctx.Response.Header.SetCookie(&c)
-// ctx.SetStatusCode(fasthttp.StatusOK)
-// return nil
-// }
-func logout(w http.ResponseWriter, r *http.Request) {
-	log.Println("Logout")
+	// update cookie
 	cookie := http.Cookie{
 		Name:    sessionToken,
-		Value:   "",
-		Expires: time.Now(),
+		Value:   tokenString,
+		Expires: expirationTime,
+		Path: "/",
 	}
 	http.SetCookie(w, &cookie)
+	render.Render(w, r, user)
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
@@ -184,4 +207,15 @@ func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	if err := render.Render(w, r, users); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 	}
+}
+
+// compaire plain-text password against a hashed-and-salted password
+// https://medium.com/@jcox250/password-hash-salt-using-golang-b041dc94cb72
+func verifyPassword(hashedPwd string, plainPwd []byte) error {
+	byteHash := []byte(hashedPwd)
+	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
+	if err != nil {
+		return err
+	}
+	return nil
 }

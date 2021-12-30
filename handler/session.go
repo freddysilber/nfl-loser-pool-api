@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -16,7 +15,6 @@ import (
 
 func session(router chi.Router) {
 	router.Get("/", getSession)
-	router.Post("/", makeSession)
 	router.Delete("/", deleteSession)
 }
 
@@ -27,20 +25,23 @@ func getSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, err := json.Marshal(user)
-	log.Println("b -->", b)
+	// b, err := json.Marshal(user)
+	_, err = json.Marshal(user)
 	if err != nil {
 		return
 	}
 	render.Render(w, r, user)
 }
 
-func makeSession(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func deleteSession(w http.ResponseWriter, r *http.Request) {
-
+	cookie := http.Cookie{
+		Name:    sessionToken,
+		Value:   "",
+		Expires: time.Now(),
+		Path: "/",
+	}
+	http.SetCookie(w, &cookie)
+	w.WriteHeader(200)
 }
 
 // ValidateSession and check user has atleast one of the roles. returns WebUserObject object iff session is valid
@@ -63,7 +64,9 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*models.User, erro
 		return user, errors.New("session expired")
 	}
 	user.Username = claims.Username
-	user, err = dbInstance.GetUserByUsernameAndPassword(user)
+	user.Id = claims.Id
+	user.Password = claims.Password
+	user, err = dbInstance.GetUserByIdUsernameAndPassword(user)
 	if err != nil {
 		return user, err
 	}
