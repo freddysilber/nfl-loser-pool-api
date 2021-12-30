@@ -127,13 +127,13 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if user == nil {
-		w.WriteHeader(401) // Unauthorized
+		render.Render(w, r, UnAuthorized)
 		return
 	}
 
 	err = verifyPassword(user.Password, []byte(providedPassword))
 	if err != nil {
-		w.WriteHeader(401)
+		render.Render(w, r, UnAuthorized)
 		return
 	}
 

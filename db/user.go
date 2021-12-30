@@ -85,7 +85,7 @@ func (db Database) NewUser(user *models.User) error {
 
 func (db Database) GetUserByIdUsernameAndPassword(user *models.User) (*models.User, error) {
 	row := db.Conn.QueryRow(
-		`SELECT id, username, name, password FROM users WHERE id = $1 AND username = $2 AND password = $3`, 
+		`SELECT id, username, name, password FROM users WHERE id = $1 AND username = $2 AND password = $3`,
 		user.Id,
 		user.Username,
 		user.Password,
@@ -129,18 +129,4 @@ func hashAndSaltPassword(pwd []byte) (string, error) {
 		return "", err
 	}
 	return string(hash), nil
-}
-
-// VerifyPassword checks the input password while verifying it with the passward in the DB.
-func VerifyPassword(userPassword string, providedPassword string) (bool, string) {
-	err := bcrypt.CompareHashAndPassword([]byte(providedPassword), []byte(userPassword))
-	check := true
-	msg := ""
-
-	if err != nil {
-		msg = "login or passowrd is incorrect"
-		check = false
-	}
-
-	return check, msg
 }

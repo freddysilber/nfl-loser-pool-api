@@ -17,6 +17,7 @@ var (
 	ErrMethodNotAllowed = &ErrorResponse{StatusCode: 405, Message: "Method not allowed, (405)"}
 	ErrNotFound         = &ErrorResponse{StatusCode: 404, Message: "Error! Resource not found. (404)"}
 	ErrBadRequest       = &ErrorResponse{StatusCode: 400, Message: "Bad request, (400)"}
+	UnAuthorized        = &ErrorResponse{StatusCode: 401, Message: "Unauthorized! (401)"}
 )
 
 func (e *ErrorResponse) Render(w http.ResponseWriter, r *http.Request) error {

@@ -21,7 +21,7 @@ func session(router chi.Router) {
 func getSession(w http.ResponseWriter, r *http.Request) {
 	user, err := ValidateSession(w, r)
 	if err != nil {
-		w.WriteHeader(401)
+		render.Render(w, r, UnAuthorized)
 		return
 	}
 
@@ -41,7 +41,6 @@ func deleteSession(w http.ResponseWriter, r *http.Request) {
 		Path: "/",
 	}
 	http.SetCookie(w, &cookie)
-	w.WriteHeader(200)
 }
 
 // ValidateSession and check user has atleast one of the roles. returns WebUserObject object iff session is valid
