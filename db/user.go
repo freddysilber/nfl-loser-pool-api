@@ -30,8 +30,10 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 
 func (db Database) GetUserById(userId int) (models.User, error) {
 	user := models.User{}
-	query := `SELECT * FROM users WHERE id = $1;`
-	row := db.Conn.QueryRow(query, userId)
+	row := db.Conn.QueryRow(
+		`SELECT * FROM users WHERE id = $1;`,
+		userId,
+	)
 	switch err := row.Scan(
 		&user.Id,
 		&user.Username,

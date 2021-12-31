@@ -62,6 +62,7 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*models.User, erro
 	if claims.ExpiresAt < time.Now().Unix() {
 		return user, errors.New("session expired")
 	}
+	// Todo: this should be fixed
 	user.Username = claims.Username
 	user.Id = claims.Id
 	user.Password = claims.Password

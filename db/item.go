@@ -26,8 +26,11 @@ func (db Database) GetAllItems() (*models.ItemList, error) {
 func (db Database) AddItem(item *models.Item) error {
 	var id int
 	var createdAt string
-	query := `INSERT INTO items (name, description) VALUES ($1, $2) RETURNING id, created_at`
-	err := db.Conn.QueryRow(query, item.Name, item.Description).Scan(&id, &createdAt)
+	err := db.Conn.QueryRow(
+		`INSERT INTO items (name, description) VALUES ($1, $2) RETURNING id, created_at`,
+		item.Name,
+		item.Description,
+	).Scan(&id, &createdAt)
 	if err != nil {
 		return err
 	}
@@ -38,8 +41,10 @@ func (db Database) AddItem(item *models.Item) error {
 
 func (db Database) GetItemById(itemId int) (models.Item, error) {
 	item := models.Item{}
-	query := `SELECT * FROM items WHERE id = $1;`
-	row := db.Conn.QueryRow(query, itemId)
+	row := db.Conn.QueryRow(
+		`SELECT * FROM items WHERE id = $1;`,
+		itemId,
+	)
 	switch err := row.Scan(&item.Id, &item.Name, &item.Description, &item.CreatedAt); err {
 	case sql.ErrNoRows:
 		return item, ErrNoMatch
@@ -49,8 +54,7 @@ func (db Database) GetItemById(itemId int) (models.Item, error) {
 }
 
 func (db Database) DeleteItem(itemId int) error {
-	query := `DELETE FROM items WHERE id = $1;`
-	_, err := db.Conn.Exec(query, itemId)
+	_, err := db.Conn.Exec(`DELETE FROM items WHERE id = $1;`, itemId)
 	switch err {
 	case sql.ErrNoRows:
 		return ErrNoMatch
@@ -61,8 +65,12 @@ func (db Database) DeleteItem(itemId int) error {
 
 func (db Database) UpdateItem(itemId int, itemData models.Item) (models.Item, error) {
 	item := models.Item{}
-	query := `UPDATE items SET name=$1, description=$2 WHERE id=$3 RETURNING id, name, description, created_at;`
-	err := db.Conn.QueryRow(query, itemData.Name, itemData.Description, itemId).Scan(&item.Id, &item.Name, &item.Description, &item.CreatedAt)
+	err := db.Conn.QueryRow(
+		`UPDATE items SET name=$1, description=$2 WHERE id=$3 RETURNING id, name, description, created_at;`,
+		itemData.Name,
+		itemData.Description,
+		itemId,
+	).Scan(&item.Id, &item.Name, &item.Description, &item.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return item, ErrNoMatch
