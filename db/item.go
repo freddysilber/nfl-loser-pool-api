@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	"github.com/freddysilber/nfl-looser-pool-api/models"
+	"github.com/freddysilber/nfl-loser-pool-api/models"
 )
 
 func (db Database) GetAllItems() (*models.ItemList, error) {

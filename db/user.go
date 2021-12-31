@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	"github.com/freddysilber/nfl-looser-pool-api/models"
+	"github.com/freddysilber/nfl-loser-pool-api/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

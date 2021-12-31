@@ -1,7 +1,7 @@
 {
-  "name": "nfl-looser-pool-api",
+  "name": "nfl-loser-pool-api",
   "version": "1.0.0",
-  "description": "api for nfl-looser-pool game",
+  "description": "api for nfl-loser-pool game",
   "scripts": {
     "dev": "docker-compose up --build",
     "docker:down": "docker-compose down",
@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/freddysilber/nfl-looser-pool-api.git"
+    "url": "git+https://github.com/freddysilber/nfl-loser-pool-api.git"
   },
   "author": "freddy silber",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/freddysilber/nfl-looser-pool-api/issues"
+    "url": "https://github.com/freddysilber/nfl-loser-pool-api/issues"
   },
-  "homepage": "https://github.com/freddysilber/nfl-looser-pool-api#readme"
+  "homepage": "https://github.com/freddysilber/nfl-loser-pool-api#readme"
 }

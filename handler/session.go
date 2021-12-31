@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/freddysilber/nfl-looser-pool-api/models"
+	"github.com/freddysilber/nfl-loser-pool-api/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )

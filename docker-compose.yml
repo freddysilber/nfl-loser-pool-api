@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   db:
-    container_name: nfl-looser-pool-database
+    container_name: nfl-loser-pool-database
     image: postgres
     networks:
       new:
@@ -16,7 +16,7 @@ services:
       - data:/var/lib/postgresql/data 
       
   server:
-    container_name: nfl-looser-pool-server
+    container_name: nfl-loser-pool-server
     build:
       context: .
       dockerfile: Dockerfile

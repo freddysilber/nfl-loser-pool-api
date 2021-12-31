@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/freddysilber/nfl-looser-pool-api/db"
+	"github.com/freddysilber/nfl-loser-pool-api/db"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"

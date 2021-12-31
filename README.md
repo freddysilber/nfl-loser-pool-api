@@ -1,6 +1,6 @@
-# NFL Looser Pool REST API
+# NFL loser Pool REST API
 
-REST API for NFL Looser Pool game
+REST API for NFL Loser Pool game
 
 ## Getting Started
 

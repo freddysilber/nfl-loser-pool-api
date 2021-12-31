@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/freddysilber/nfl-looser-pool-api/db"
-	"github.com/freddysilber/nfl-looser-pool-api/models"
+	"github.com/freddysilber/nfl-loser-pool-api/db"
+	"github.com/freddysilber/nfl-loser-pool-api/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )
