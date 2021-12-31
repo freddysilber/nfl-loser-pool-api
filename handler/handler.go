@@ -21,7 +21,7 @@ func NewHandler(db db.Database) http.Handler {
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		// ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
+		AllowCredentials: true,
 		// MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 
@@ -33,6 +33,7 @@ func NewHandler(db db.Database) http.Handler {
 	// Register model specific route handlers
 	router.Route("/items", items)
 	router.Route("/users", users)
+	router.Route("/session", session)
 	return router
 }
 

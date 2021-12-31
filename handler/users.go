@@ -3,19 +3,40 @@ package handler
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/freddysilber/nfl-looser-pool-api/db"
 	"github.com/freddysilber/nfl-looser-pool-api/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userIdKeyString string
 
+// Claims struct for jwt token contents
+type Claims struct {
+	Id int `json:"id"`// User Id
+	Username string `json:"username"`
+	Password string `json:"password"`
+	jwt.StandardClaims
+}
+
+// Credentials struct for demarshalling session post body
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// cookie key
+const sessionToken = "session-token"
+
 var userIDKey userIdKeyString = "userID"
+// TODO: use a secure key mounted during deployment
+var jwtKey = []byte("ja93jalkdf092jlkadfh02h3lkdfiu0293lakndf0923haf93ja1h")
 
 func users(router chi.Router) {
 	router.Get("/", getAllUsers)
@@ -29,7 +50,6 @@ func users(router chi.Router) {
 }
 
 func UserContext(next http.Handler) http.Handler {
-	log.Println("GET USER")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userId := chi.URLParam(r, "userId")
 		if userId == "" {
@@ -47,50 +67,104 @@ func UserContext(next http.Handler) http.Handler {
 
 func signUp(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
+	
 	if err := render.Bind(r, user); err != nil {
 		render.Render(w, r, ErrBadRequest)
 		return
 	}
-	if err := dbInstance.SignUp(user); err != nil {
+	
+	if err := dbInstance.NewUser(user); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 		return
 	}
-	if err := render.Render(w, r, user); err != nil {
+
+	// create jwt token
+	expirationTime := time.Now().Add(60 * time.Minute)
+	claims := &Claims{
+		Username: user.Username,
+		Id: user.Id,
+		Password: user.Password,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	// sign token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		// return err
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
 	}
-	cookie    :=    http.Cookie{ Name: "token", Value: user.TokenHash }
-	log.Println(cookie)
-	log.Println("set cookie?")
+
+	// update cookie
+	cookie := http.Cookie{
+		Name:    sessionToken,
+		Value:   tokenString,
+		Expires: expirationTime,
+		Path: "/",
+	}
 	http.SetCookie(w, &cookie)
-	// cookie    :=    http.Cookie{Name: "csrftoken",Value:"abcd",Expires:expiration}
+
+	// return user info in response, such as roles
+	user.Password = "" // sanitize
+
+	render.Render(w, r, user)
 }
 
 func logIn(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	if err := render.Bind(r, user); err != nil {
-		render.Render(w, r, ErrBadRequest)
+		render.Render(w, r, ErrBadRequest);
 		return
 	}
-
-	row, err := dbInstance.GetUserByUsernameAndPassword(user)
-
+	var providedPassword = user.Password
+	
+	user, err := dbInstance.GetUserByUsername(user)
 	if err != nil {
-		log.Println("ROW", row)
-		render.Render(w, r, ErrorRenderer(err))
+		render.Render(w, r, ErrNotFound)
 		return
 	}
-	if err := render.Render(w, r, user); err != nil {
+	if user == nil {
+		render.Render(w, r, UnAuthorized)
+		return
+	}
+
+	err = verifyPassword(user.Password, []byte(providedPassword))
+	if err != nil {
+		render.Render(w, r, UnAuthorized)
+		return
+	}
+
+	// create jwt token
+	expirationTime := time.Now().Add(60 * time.Minute)
+	claims := &Claims{
+		Username: user.Username,
+		Id: user.Id,
+		Password: user.Password,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	// sign token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
 		render.Render(w, r, ServerErrorRenderer(err))
 		return
 	}
 
-	// cookie    :=    http.Cookie{ Name: "token", Value: user.TokenHash }
-	// log.Println(cookie)
-	// log.Println("set cookie?")
-	// http.SetCookie(w, &cookie)
-	log.Println("MADE IT")
-	// passwordVerified, msg := dbInstance.VerifyPassword(row.Password, user.Password)
+	// update cookie
+	cookie := http.Cookie{
+		Name:    sessionToken,
+		Value:   tokenString,
+		Expires: expirationTime,
+		Path: "/",
+	}
+	http.SetCookie(w, &cookie)
+	render.Render(w, r, user)
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
@@ -133,4 +207,15 @@ func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	if err := render.Render(w, r, users); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 	}
+}
+
+// compaire plain-text password against a hashed-and-salted password
+// https://medium.com/@jcox250/password-hash-salt-using-golang-b041dc94cb72
+func verifyPassword(hashedPwd string, plainPwd []byte) error {
+	byteHash := []byte(hashedPwd)
+	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
+	if err != nil {
+		return err
+	}
+	return nil
 }

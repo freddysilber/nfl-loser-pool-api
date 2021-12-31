@@ -8,7 +8,9 @@
     "kill-postgres": "sudo pkill -u postgres",
     "db:up": "migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations up",
     "db:down": "migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations down",
-    "db:down:up:dev": "npm run db:down && npm run db:up && npm run dev"
+    "db:drop": "migrate -database postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable -path db/migrations drop",
+    "db:down:up:dev": "npm run db:down && npm run db:up && npm run dev",
+    "db:drop:dev": "npm run db:drop && npm run db:up && npm run dev"
   },
   "repository": {
     "type": "git",

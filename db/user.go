@@ -2,11 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/freddysilber/nfl-looser-pool-api/models"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,17 +15,10 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 	}
 	for rows.Next() {
 		var user models.User
-		// err := scanUser(user, rows)
 		err := rows.Scan(
-			&user.ID,
+			&user.Id,
 			&user.Username,
-			// &user.Email,
-			&user.FirstName,
-			&user.LastName,
 			&user.Password,
-			&user.TokenHash,
-			&user.CreatedAt,
-			&user.UpdatedAt,
 		)
 		if err != nil {
 			return list, err
@@ -41,17 +30,14 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 
 func (db Database) GetUserById(userId int) (models.User, error) {
 	user := models.User{}
-	query := `SELECT * FROM users WHERE id = $1;`
-	row := db.Conn.QueryRow(query, userId)
+	row := db.Conn.QueryRow(
+		`SELECT * FROM users WHERE id = $1;`,
+		userId,
+	)
 	switch err := row.Scan(
-		&user.ID,
+		&user.Id,
 		&user.Username,
-		&user.FirstName,
-		&user.LastName,
 		&user.Password,
-		&user.TokenHash,
-		&user.CreatedAt,
-		&user.UpdatedAt,
 	); err {
 	case sql.ErrNoRows:
 		return user, ErrNoMatch
@@ -61,8 +47,7 @@ func (db Database) GetUserById(userId int) (models.User, error) {
 }
 
 func (db Database) DeleteUser(userId int) error {
-	query := `DELETE FROM users WHERE id = $1;`
-	_, err := db.Conn.Exec(query, userId)
+	_, err := db.Conn.Exec(`DELETE FROM users WHERE id = $1;`, userId)
 	switch err {
 	case sql.ErrNoRows:
 		return ErrNoMatch
@@ -71,51 +56,47 @@ func (db Database) DeleteUser(userId int) error {
 	}
 }
 
-func (db Database) SignUp(user *models.User) error {
-	user.Password = GeneratehashPassword(user.Password)
-	user.TokenHash = GenerateJWT(user.Username)
-
-	var id int
-	var createdAt string
-
-	query := `INSERT INTO users (
-		username, 
-		password, 
-		token_hash, 
-		first_name, 
-		last_name
-	) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
-
-	err := db.Conn.QueryRow(
-		query,
-		user.Username,
-		user.Password,
-		user.TokenHash,
-		user.FirstName,
-		user.LastName,
-	).Scan(&id, &createdAt)
+func (db Database) NewUser(user *models.User) error {
+	hashedPassword, err := hashAndSaltPassword([]byte(user.Password))
 	if err != nil {
 		return err
 	}
-	user.ID = id
-	user.CreatedAt = createdAt
+	user.Password = hashedPassword
+
+	var id int
+
+	query := `INSERT INTO users (
+		name,
+		username, 
+		password
+	) VALUES ($1, $2, $3) RETURNING id`
+
+	err = db.Conn.QueryRow(
+		query,
+		user.Name,
+		user.Username,
+		user.Password,
+	).Scan(&id)
+
+	if err != nil {
+		return err
+	}
+	user.Id = id
 	return nil
 }
 
-func (db Database) GetUserByUsernameAndPassword(user *models.User) (*models.User, error) {
-	log.Println("User username --> ", user.Username)
-	query := `SELECT * FROM users WHERE username = $1`
-	row := db.Conn.QueryRow(query, user.Username)
-	log.Println("Queried User", row)
+func (db Database) GetUserByIdUsernameAndPassword(user *models.User) (*models.User, error) {
+	row := db.Conn.QueryRow(
+		`SELECT id, username, name, password FROM users WHERE id = $1 AND username = $2 AND password = $3`,
+		user.Id,
+		user.Username,
+		user.Password,
+	)
 	switch err := row.Scan(
-		&user.ID,
+		&user.Id,
 		&user.Username,
-		&user.FirstName,
-		&user.LastName,
+		&user.Name,
 		&user.Password,
-		&user.TokenHash,
-		&user.CreatedAt,
-		&user.UpdatedAt,
 	); err {
 	case sql.ErrNoRows:
 		return user, ErrNoMatch
@@ -124,60 +105,30 @@ func (db Database) GetUserByUsernameAndPassword(user *models.User) (*models.User
 	}
 }
 
-// HashPassword is used to encrypt the password before it is stored in the DB
-func GeneratehashPassword(password string) string {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	if err != nil {
-		log.Panic(err)
+func (db Database) GetUserByUsername(user *models.User) (*models.User, error) {
+	row := db.Conn.QueryRow(
+		`SELECT id, username, name, password FROM users WHERE username = $1`,
+		user.Username,
+	)
+	switch err := row.Scan(
+		&user.Id,
+		&user.Username,
+		&user.Name,
+		&user.Password,
+	); err {
+	case sql.ErrNoRows:
+		return user, ErrNoMatch
+	default:
+		return user, err
 	}
-	return string(bytes)
 }
 
-var secretkey = "mySuperSecretKey" // put this in the .env file
-func GenerateJWT(username string) string {
-	var mySigningKey = []byte(secretkey)
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-
-	claims["authorized"] = true
-	claims["username"] = username
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
-
-	tokenString, err := token.SignedString(mySigningKey)
-
+// generate a hashed-and-salted password from plain-text password. return value can be stored in db
+// https://medium.com/@jcox250/password-hash-salt-using-golang-b041dc94cb72
+func hashAndSaltPassword(pwd []byte) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
-		fmt.Errorf("Something Went Wrong: %s", err.Error())
-		return ""
+		return "", err
 	}
-	return tokenString
+	return string(hash), nil
 }
-
-// VerifyPassword checks the input password while verifying it with the passward in the DB.
-func VerifyPassword(userPassword string, providedPassword string) (bool, string) {
-	err := bcrypt.CompareHashAndPassword([]byte(providedPassword), []byte(userPassword))
-	check := true
-	msg := ""
-
-	if err != nil {
-		msg = "login or passowrd is incorrect"
-		// msg = fmt.Sprintf("login or passowrd is incorrect")
-		// msg = fmt.Sprintf("login or passowrd is incorrect %d", 100)
-		check = false
-	}
-
-	return check, msg
-}
-
-// func scanUser(user models.User, rows *sql.Rows) error {
-// 	return rows.Scan(
-// 		&user.ID,
-// 		&user.Username,
-// 		// &user.Email,
-// 		&user.FirstName,
-// 		&user.LastName,
-// 		&user.Password,
-// 		&user.TokenHash,
-// 		&user.CreatedAt,
-// 		&user.UpdatedAt,
-// 	);
-// }
