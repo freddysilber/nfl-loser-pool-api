@@ -85,7 +85,10 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*models.User, erro
 }
 
 func verifyToken(r *http.Request) (*jwt.Token, error) {
-	tokenString, _ := r.Cookie(sessionToken)
+	tokenString, err := r.Cookie(sessionToken)
+	if err != nil {
+		return nil, err
+	}
 	token, err := jwt.Parse(tokenString.Value, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
