@@ -38,7 +38,7 @@ func deleteSession(w http.ResponseWriter, r *http.Request) {
 		Name:    sessionToken,
 		Value:   "",
 		Expires: time.Now(),
-		Path: "/",
+		Path:    "/",
 	}
 	http.SetCookie(w, &cookie)
 }
