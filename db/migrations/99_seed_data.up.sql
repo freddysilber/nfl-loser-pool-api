@@ -6,3 +6,6 @@ INSERT INTO "items" (name, description, ownerId)
 
 INSERT INTO "items" (name, description, ownerId)
 	VALUES ('Item #2', 'Item #2 Created From Seed Script', 1);
+
+INSERT INTO "games" (name, description, ownerId)
+	VALUES ('First Game', 'Game Description', 1);

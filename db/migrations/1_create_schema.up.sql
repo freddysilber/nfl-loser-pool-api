@@ -29,3 +29,12 @@ CREATE TABLE IF NOT EXISTS items(
 	ownerId INT REFERENCES users(id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create Games table
+CREATE TABLE IF NOT EXISTS games(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(100) NOT NULL,
+	description TEXT,
+	ownerId INT REFERENCES users(id),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
