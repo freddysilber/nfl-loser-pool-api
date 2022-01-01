@@ -21,7 +21,6 @@ func session(router chi.Router) {
 func getSession(w http.ResponseWriter, r *http.Request) {
 	user, err := ValidateSession(w, r)
 	if err != nil {
-		render.Render(w, r, UnAuthorized)
 		return
 	}
 
