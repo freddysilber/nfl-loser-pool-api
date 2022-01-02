@@ -13,7 +13,7 @@ import (
 )
 
 type itemIdKeyString string
-var itemIDKey itemIdKeyString = "itemID"
+var itemIdKey itemIdKeyString = "itemID"
 
 func items(router chi.Router) {
 	router.Get("/", getAllItems)
@@ -37,7 +37,7 @@ func ItemContext(next http.Handler) http.Handler {
 		if err != nil {
 			render.Render(w, r, ErrorRenderer(fmt.Errorf("invalid item ID")))
 		}
-		ctx := context.WithValue(r.Context(), itemIDKey, id)
+		ctx := context.WithValue(r.Context(), itemIdKey, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -70,7 +70,7 @@ func getAllItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func getItem(w http.ResponseWriter, r *http.Request) {
-	itemID := r.Context().Value(itemIDKey).(int)
+	itemID := r.Context().Value(itemIdKey).(int)
 	item, err := dbInstance.GetItemById(itemID)
 	if err != nil {
 		if err == db.ErrNoMatch {
@@ -87,7 +87,7 @@ func getItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteItem(w http.ResponseWriter, r *http.Request) {
-	itemId := r.Context().Value(itemIDKey).(int)
+	itemId := r.Context().Value(itemIdKey).(int)
 	err := dbInstance.DeleteItem(itemId)
 	if err != nil {
 		if err == db.ErrNoMatch {
@@ -100,7 +100,7 @@ func deleteItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateItem(w http.ResponseWriter, r *http.Request) {
-	itemId := r.Context().Value(itemIDKey).(int)
+	itemId := r.Context().Value(itemIdKey).(int)
 	itemData := models.Item{}
 	if err := render.Bind(r, &itemData); err != nil {
 		render.Render(w, r, ErrBadRequest)

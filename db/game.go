@@ -1,6 +1,10 @@
 package db
 
-import "github.com/freddysilber/nfl-loser-pool-api/models"
+import (
+	"database/sql"
+
+	"github.com/freddysilber/nfl-loser-pool-api/models"
+)
 
 func (db Database) AddGame(game *models.Game) error {
 	var id int
@@ -26,4 +30,14 @@ func (db Database) AddGame(game *models.Game) error {
 	game.Id = id
 	game.CreatedAt = createdAt
 	return nil
+}
+
+func (db Database) DeleteGame(gameId int) error {
+	_, err := db.Conn.Exec(`DELETE FROM games WHERE id = $1;`, gameId)
+	switch err {
+	case sql.ErrNoRows:
+		return ErrNoMatch
+	default:
+		return err
+	}
 }
