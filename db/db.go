@@ -22,18 +22,6 @@ type Database struct {
 
 // Connect to the Database
 func Initialize(username, password, database string, host string) (Database, error) {
-
-	log.Println(" --- DATABASE CONNECTION ARGUMENTS ---")
-	/*
-	Using 'host.docker.internal' from .env currently. we might also use 'database' or 'localhost' here.
-	localhost: use this value outside of the docker environment. ie. 'go run main.go' context
-	 */
-	log.Println("Host --> ", host)
-	log.Println("Port --> ", PORT)
-	log.Println("Username --> ", username)
-	log.Println("Password --> ", password)
-	log.Println("Database --> ", database)
-
 	db := Database{}
 
 	dsn := fmt.Sprintf(

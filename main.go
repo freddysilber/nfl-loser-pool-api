@@ -11,15 +11,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/freddysilber/nfl-loser-pool-api/db"
 	"github.com/freddysilber/nfl-loser-pool-api/handler"
 )
 
 func main() {
-
-	color.Green("Starting...")
-
 	addr := ":8080"
 	listener, err := net.Listen("tcp", addr)
 
