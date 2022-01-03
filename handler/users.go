@@ -34,7 +34,7 @@ type Credentials struct {
 // cookie key
 const sessionToken = "session-token"
 
-var userIDKey userIdKeyString = "userID"
+var userIdKey userIdKeyString = "userID"
 // TODO: use a secure key mounted during deployment
 var jwtKey = []byte("ja93jalkdf092jlkadfh02h3lkdfiu0293lakndf0923haf93ja1h")
 
@@ -46,6 +46,10 @@ func users(router chi.Router) {
 		router.Use(UserContext)
 		router.Get("/", getUser)
 		router.Delete("/", deleteUser)
+	})
+	router.Route("/games/{userId}", func(router chi.Router) {
+		router.Use(UserContext)
+		router.Get("/", getGamesByUser)
 	})
 }
 
@@ -60,7 +64,7 @@ func UserContext(next http.Handler) http.Handler {
 		if err != nil {
 			render.Render(w, r, ErrorRenderer(fmt.Errorf("invalid user ID")))
 		}
-		ctx := context.WithValue(r.Context(), userIDKey, id)
+		ctx := context.WithValue(r.Context(), userIdKey, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -168,7 +172,7 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
-	userId := r.Context().Value(userIDKey).(int)
+	userId := r.Context().Value(userIdKey).(int)
 	user, err := dbInstance.GetUserById(userId)
 	if err != nil {
 		if err == db.ErrNoMatch {
@@ -185,7 +189,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	userId := r.Context().Value(userIDKey).(int)
+	userId := r.Context().Value(userIdKey).(int)
 	err := dbInstance.DeleteUser(userId)
 	
 	if err != nil {
@@ -206,6 +210,19 @@ func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := render.Render(w, r, users); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
+	}
+}
+
+func getGamesByUser(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value(userIdKey).(int)
+	games, err := dbInstance.GetGamesByUser(userId)
+	if err != nil {
+		render.Render(w, r, ServerErrorRenderer(err))
+		return
+	}
+	if err := render.Render(w, r, games); err != nil {
+		render.Render(w, r, ErrorRenderer(err))
+		return
 	}
 }
 

@@ -123,6 +123,23 @@ func (db Database) GetUserByUsername(user *models.User) (*models.User, error) {
 	}
 }
 
+func (db Database) GetGamesByUser(userId int) (*models.GameList, error) {
+	list := &models.GameList{}
+	games, err := db.Conn.Query("SELECT * FROM games WHERE ownerId = $1 ORDER BY name DESC", userId)
+	if err != nil {
+		return list, err
+	}
+	for games.Next() {
+		var game models.Game
+		err := games.Scan(&game.Id, &game.Name, &game.Description, &game.OwnerId, &game.CreatedAt)
+		if err != nil {
+			return list, err
+		}
+		list.Games = append(list.Games, game)
+	}
+	return list, nil
+}
+
 // generate a hashed-and-salted password from plain-text password. return value can be stored in db
 // https://medium.com/@jcox250/password-hash-salt-using-golang-b041dc94cb72
 func hashAndSaltPassword(pwd []byte) (string, error) {
