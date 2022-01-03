@@ -9,3 +9,6 @@ INSERT INTO "items" (name, description, ownerId)
 
 INSERT INTO "games" (name, description, ownerId)
 	VALUES ('First Game', 'Game Description', 1);
+
+INSERT INTO "players" (gameId, playerId)
+	VALUES (1, 1)

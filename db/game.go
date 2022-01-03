@@ -32,6 +32,23 @@ func (db Database) AddGame(game *models.Game) error {
 	return nil
 }
 
+func (db Database) GetAllGames() (*models.GameList, error) {
+	list := &models.GameList{}
+	rows, err := db.Conn.Query("SELECT * FROM games ORDER BY ID DESC")
+	if err != nil {
+		return list, err
+	}
+	for rows.Next() {
+		var game models.Game
+		err := rows.Scan(&game.Id, &game.Name, &game.Description, &game.OwnerId, &game.CreatedAt)
+		if err != nil {
+			return list, err
+		}
+		list.Games = append(list.Games, game)
+	}
+	return list, nil
+}
+
 func (db Database) DeleteGame(gameId int) error {
 	_, err := db.Conn.Exec(`DELETE FROM games WHERE id = $1;`, gameId)
 	switch err {

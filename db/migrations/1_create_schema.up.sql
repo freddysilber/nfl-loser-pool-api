@@ -37,4 +37,11 @@ CREATE TABLE IF NOT EXISTS games(
 	description TEXT,
 	ownerId INT REFERENCES users(id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
+
+-- Create GamePlayer tables (join table to link players to games??)
+CREATE TABLE IF NOT EXISTS players(
+	id SERIAL PRIMARY KEY,
+	gameId INT REFERENCES games(id),
+	playerId INT REFERENCES users(id)
+);
