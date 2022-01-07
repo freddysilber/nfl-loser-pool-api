@@ -10,6 +10,7 @@ import (
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
 type gameIdKeyString string
@@ -61,13 +62,17 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		render.Render(w, r, UnAuthorized)
 	}
-
+	// Create a random game id / uuid
+	id, err := gonanoid.New()
+	if err != nil {
+		return
+	}
 	game := &models.Game{}
 	if err := render.Bind(r, game); err != nil {
 		render.Render(w, r, ErrBadRequest)
 		return
 	}
-	if err := dbInstance.AddGame(game); err != nil {
+	if err := dbInstance.AddGame(game, id); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 		return
 	}

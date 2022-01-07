@@ -7,8 +7,8 @@ INSERT INTO "items" (name, description, ownerId)
 INSERT INTO "items" (name, description, ownerId)
 	VALUES ('Item #2', 'Item #2 Created From Seed Script', 1);
 
-INSERT INTO "games" (name, description, ownerId)
-	VALUES ('First Game', 'Game Description', 1);
+INSERT INTO "games" (name, description, ownerId, share_id)
+	VALUES ('First Game', 'Game Description', 1, 'unique id #1');
 
 INSERT INTO "players" (gameId, playerId)
 	VALUES (1, 1)
