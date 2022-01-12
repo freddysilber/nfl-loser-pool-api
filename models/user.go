@@ -7,11 +7,12 @@ import (
 
 type User struct {
 	// Id       int      `json:"id" sql:"id"`
-	Id       int      `json:"id"`
-	Name     string   `json:"name"`
-	Username string   `json:"username"`
-	Password string   `json:"password"`
-	Roles    []string `json:"roles"`
+	Id        int      `json:"id"`
+	Name      string   `json:"name"`
+	Username  string   `json:"username"`
+	Password  string   `json:"password"`
+	// Roles     []string `json:"roles"`
+	CreatedAt string   `json:"created_at"`
 }
 
 // type User struct {

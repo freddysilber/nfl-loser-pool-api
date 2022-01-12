@@ -13,7 +13,11 @@ func (db Database) AddGame(game *models.Game, shareId string) error {
 	var description string
 	var createdAt string
 	err := db.Conn.QueryRow(
-		`INSERT INTO games (ownerId, name, description, share_id) VALUES ($1, $2, $3, $4) RETURNING id, name, ownerId, description, created_at, share_id`,
+		`
+			INSERT INTO games (ownerId, name, description, share_id)
+			VALUES ($1, $2, $3, $4)
+			RETURNING id, name, ownerId, description, created_at, share_id
+		`,
 		game.OwnerId,
 		game.Name,
 		game.Description,
@@ -38,23 +42,48 @@ func (db Database) AddGame(game *models.Game, shareId string) error {
 
 func (db Database) GetAllGames() (*models.GameList, error) {
 	list := &models.GameList{}
-	rows, err := db.Conn.Query("SELECT * FROM games ORDER BY ID DESC")
+	rows, err := db.Conn.Query(`
+		SELECT *
+		FROM games
+		ORDER BY ID DESC
+	`)
+
 	if err != nil {
 		return list, err
 	}
+
 	for rows.Next() {
 		var game models.Game
-		err := rows.Scan(&game.Id, &game.Name, &game.Description, &game.OwnerId, &game.CreatedAt)
+
+		// These 'Scan' calls work the best when they are in the exact order as the SQL tables
+		err := rows.Scan(
+			&game.Id,
+			&game.Name,
+			&game.Description,
+			&game.ShareId,
+			&game.OwnerId,
+			&game.CreatedAt,
+		)
+
 		if err != nil {
 			return list, err
 		}
+		
 		list.Games = append(list.Games, game)
 	}
 	return list, nil
 }
 
 func (db Database) DeleteGame(gameId int) error {
-	_, err := db.Conn.Exec(`DELETE FROM games WHERE id = $1;`, gameId)
+	_, err := db.Conn.Exec(
+		`
+			DELETE
+			FROM games
+			WHERE id = $1;
+		`,
+		gameId,
+	)
+
 	switch err {
 	case sql.ErrNoRows:
 		return ErrNoMatch

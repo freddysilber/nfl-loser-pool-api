@@ -15,10 +15,13 @@ func (db Database) GetAllUsers() (*models.UserList, error) {
 	}
 	for rows.Next() {
 		var user models.User
+		// err := scanUsers(rows)
 		err := rows.Scan(
 			&user.Id,
 			&user.Username,
 			&user.Password,
+			&user.Name,
+			&user.CreatedAt,
 		)
 		if err != nil {
 			return list, err
@@ -123,15 +126,32 @@ func (db Database) GetUserByUsername(user *models.User) (*models.User, error) {
 	}
 }
 
+// Should we move this into under the 'User' handler???
+// ... We probably should ^^^ at some point
 func (db Database) GetGamesByUser(userId int) (*models.GameList, error) {
 	list := &models.GameList{}
-	games, err := db.Conn.Query("SELECT * FROM games WHERE ownerId = $1 ORDER BY name DESC", userId)
+	games, err := db.Conn.Query(
+		`
+			SELECT * 
+			FROM games 
+			WHERE ownerId = $1 
+			ORDER BY name DESC
+		`,
+		userId,
+	)
 	if err != nil {
 		return list, err
 	}
 	for games.Next() {
 		var game models.Game
-		err := games.Scan(&game.Id, &game.Name, &game.Description, &game.OwnerId, &game.CreatedAt)
+		err := games.Scan(
+			&game.Id,
+			&game.Name,
+			&game.Description,
+			&game.ShareId,
+			&game.OwnerId,
+			&game.CreatedAt,
+		)
 		if err != nil {
 			return list, err
 		}
@@ -148,4 +168,16 @@ func hashAndSaltPassword(pwd []byte) (string, error) {
 		return "", err
 	}
 	return string(hash), nil
+}
+
+func scanUsers(rows *sql.Rows) error {
+	var user models.User
+	return rows.Scan(
+		&user.Id,
+		&user.Username,
+		&user.Password,
+		&user.Name,
+		// &user.Roles,
+		&user.CreatedAt,
+	)
 }

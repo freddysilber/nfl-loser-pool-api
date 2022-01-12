@@ -58,6 +58,7 @@ func getAllGames(w http.ResponseWriter, r *http.Request) {
 }
 
 func createGame(w http.ResponseWriter, r *http.Request) {
+	// TODO: abstract this block
 	_, err := ValidateSession(w, r)
 	if err != nil {
 		render.Render(w, r, UnAuthorized)
