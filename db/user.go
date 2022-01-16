@@ -41,6 +41,8 @@ func (db Database) GetUserById(userId int) (models.User, error) {
 		&user.Id,
 		&user.Username,
 		&user.Password,
+		&user.Name,
+		&user.CreatedAt,
 	); err {
 	case sql.ErrNoRows:
 		return user, ErrNoMatch
@@ -90,7 +92,7 @@ func (db Database) NewUser(user *models.User) error {
 
 func (db Database) GetUserByIdUsernameAndPassword(user *models.User) (*models.User, error) {
 	row := db.Conn.QueryRow(
-		`SELECT id, username, name, password FROM users WHERE id = $1 AND username = $2 AND password = $3`,
+		`SELECT * FROM users WHERE id = $1 AND username = $2 AND password = $3`,
 		user.Id,
 		user.Username,
 		user.Password,
@@ -100,6 +102,7 @@ func (db Database) GetUserByIdUsernameAndPassword(user *models.User) (*models.Us
 		&user.Username,
 		&user.Name,
 		&user.Password,
+		&user.CreatedAt,
 	); err {
 	case sql.ErrNoRows:
 		return user, ErrNoMatch
@@ -134,7 +137,7 @@ func (db Database) GetGamesByUser(userId int) (*models.GameList, error) {
 		`
 			SELECT * 
 			FROM games 
-			WHERE ownerId = $1 
+			WHERE owner_id = $1 
 			ORDER BY name DESC
 		`,
 		userId,

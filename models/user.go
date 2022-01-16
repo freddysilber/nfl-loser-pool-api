@@ -12,7 +12,7 @@ type User struct {
 	Username  string   `json:"username"`
 	Password  string   `json:"password"`
 	// Roles     []string `json:"roles"`
-	CreatedAt string   `json:"created_at"`
+	CreatedAt string   `json:"createdAt"`
 }
 
 // type User struct {

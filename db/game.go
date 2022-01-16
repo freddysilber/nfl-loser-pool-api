@@ -14,9 +14,9 @@ func (db Database) AddGame(game *models.Game, shareId string) error {
 	var createdAt string
 	err := db.Conn.QueryRow(
 		`
-			INSERT INTO games (ownerId, name, description, share_id)
+			INSERT INTO games (owner_id, name, description, share_id)
 			VALUES ($1, $2, $3, $4)
-			RETURNING id, name, ownerId, description, created_at, share_id
+			RETURNING id, name, owner_id, description, created_at, share_id
 		`,
 		game.OwnerId,
 		game.Name,
