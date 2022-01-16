@@ -10,7 +10,7 @@ type Item struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	OwnerId     int    `json:"ownerId"`
-	CreatedAt   string `json:"created_at"`
+	CreatedAt   string `json:"createdAt"`
 }
 
 type ItemList struct {

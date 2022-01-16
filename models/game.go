@@ -10,8 +10,8 @@ type Game struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	OwnerId     int    `json:"ownerId"`
-	CreatedAt   string `json:"created_at"`
-	ShareId     string `json:"share_id"`
+	CreatedAt   string `json:"createdAt"`
+	ShareId     string `json:"shareId"`
 }
 
 type GameList struct {
