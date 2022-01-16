@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -67,10 +66,6 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (*models.User, erro
 	user.Id = claims.Id
 	user.Password = claims.Password
 	user, err = dbInstance.GetUserByIdUsernameAndPassword(user)
-	log.Println(user)
-	log.Println(user.CreatedAt)
-	log.Println(user.Name)
-	log.Println(user.Username)
 	if err != nil {
 		return user, err
 	}
