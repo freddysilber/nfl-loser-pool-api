@@ -74,6 +74,7 @@ func (db Database) GetAllGames() (*models.GameList, error) {
 	return list, nil
 }
 
+// TODO: only game owners should be able to delete their own games
 func (db Database) DeleteGame(gameId int) error {
 	_, err := db.Conn.Exec(
 		`

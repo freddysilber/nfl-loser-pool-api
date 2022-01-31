@@ -22,6 +22,7 @@ func games(router chi.Router) {
 	router.Route("/{gameId}", func(router chi.Router) {
 		router.Use(GameContext)
 		router.Delete("/", deleteGame)
+		router.Get("/players", getGamePlayers)
 	})
 }
 
@@ -93,5 +94,21 @@ func deleteGame(w http.ResponseWriter, r *http.Request) {
 			render.Render(w, r, ServerErrorRenderer(err))
 		}
 		return
+	}
+}
+
+func getGamePlayers(w http.ResponseWriter, r *http.Request) {
+	_, err := ValidateSession(w, r)
+	if err != nil {
+		render.Render(w, r, UnAuthorized)
+	}
+	gameId := r.Context().Value(gameIdKey).(int)
+	players, err := dbInstance.GetGamePlayers(gameId)
+	if err != nil {
+		render.Render(w, r, ServerErrorRenderer(err))
+		return
+	}
+	if err := render.Render(w, r, players); err != nil {
+		render.Render(w, r, ErrorRenderer(err))
 	}
 }
