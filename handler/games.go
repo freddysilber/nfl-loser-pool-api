@@ -14,6 +14,7 @@ import (
 )
 
 type gameIdKeyString string
+
 var gameIdKey gameIdKeyString = "gameId"
 
 func games(router chi.Router) {
@@ -86,7 +87,7 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 
 func deleteGame(w http.ResponseWriter, r *http.Request) {
 	gameId := r.Context().Value(gameIdKey).(int)
-	err := dbInstance.DeleteGame(gameId);
+	err := dbInstance.DeleteGame(gameId)
 	if err != nil {
 		if err == db.ErrNoMatch {
 			render.Render(w, r, ErrNotFound)
@@ -98,10 +99,12 @@ func deleteGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func getGamePlayers(w http.ResponseWriter, r *http.Request) {
+	// TODO this pops up in muliple places, so we should find a solution to remove this block
 	_, err := ValidateSession(w, r)
 	if err != nil {
 		render.Render(w, r, UnAuthorized)
 	}
+
 	gameId := r.Context().Value(gameIdKey).(int)
 	players, err := dbInstance.GetGamePlayers(gameId)
 	if err != nil {
