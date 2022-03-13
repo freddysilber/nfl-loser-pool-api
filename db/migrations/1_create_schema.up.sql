@@ -12,7 +12,7 @@
 
 -- Create Users table
 CREATE TABLE IF NOT EXISTS users(
-	id SERIAL PRIMARY KEY,
+	id VARCHAR(200) NOT NULL UNIQUE PRIMARY KEY, -- Using VARCHAR(200) since our Ids are now using gonanoid rather than an autoincrementing number
 	name VARCHAR(255) NOT NULL,
 	username VARCHAR(100) NOT NULL UNIQUE,
 	-- roles VARCHAR(255),
@@ -25,23 +25,23 @@ CREATE TABLE IF NOT EXISTS items(
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	description TEXT,
-	owner_id INT REFERENCES users(id),
+	owner_id VARCHAR(200) NOT NULL REFERENCES users(id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create Games table
 CREATE TABLE IF NOT EXISTS games(
-	id SERIAL PRIMARY KEY,
+	id VARCHAR(200) NOT NULL UNIQUE PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	description TEXT,
 	share_id VARCHAR(200) NOT NULL UNIQUE,
-	owner_id INT REFERENCES users(id),
+	owner_id VARCHAR(200) NOT NULL REFERENCES users(id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create GamePlayer tables (join table to link players to games??)
 CREATE TABLE IF NOT EXISTS players(
 	id SERIAL PRIMARY KEY,
-	game_id INT REFERENCES games(id),
-	player_id INT REFERENCES users(id)
+	game_id VARCHAR(200) NOT NULL REFERENCES games(id),
+	player_id VARCHAR(200) NOT NULL REFERENCES users(id)
 );

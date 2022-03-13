@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -12,6 +11,7 @@ import (
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,7 +19,7 @@ type userIdKeyString string
 
 // Claims struct for jwt token contents
 type Claims struct {
-	Id int `json:"id"`// User Id
+	Id string `json:"id"`// User Id
 	Username string `json:"username"`
 	Password string `json:"password"`
 	jwt.StandardClaims
@@ -60,10 +60,7 @@ func UserContext(next http.Handler) http.Handler {
 			render.Render(w, r, ErrorRenderer(fmt.Errorf("user ID is required")))
 			return
 		}
-		id, err := strconv.Atoi(userId)
-		if err != nil {
-			render.Render(w, r, ErrorRenderer(fmt.Errorf("invalid user ID")))
-		}
+		id := userId
 		ctx := context.WithValue(r.Context(), userIdKey, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -84,9 +81,13 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 	// create jwt token
 	expirationTime := time.Now().Add(60 * time.Minute)
+	id, err := gonanoid.New()
+	if err != nil {
+		return
+	}
 	claims := &Claims{
 		Username: user.Username,
-		Id: user.Id,
+		Id: id,
 		Password: user.Password,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
@@ -213,6 +214,7 @@ func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// TODO: we should move this under the 'games' route
 func getGamesByUser(w http.ResponseWriter, r *http.Request) {
 	// TODO: abstract this block
 	_, err := ValidateSession(w, r)
@@ -220,7 +222,7 @@ func getGamesByUser(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, UnAuthorized)
 	}
 
-	userId := r.Context().Value(userIdKey).(int)
+	userId := r.Context().Value(userIdKey).(string)
 	games, err := dbInstance.GetGamesByUser(userId)
 	if err != nil {
 		render.Render(w, r, ServerErrorRenderer(err))

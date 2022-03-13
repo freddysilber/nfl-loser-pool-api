@@ -6,24 +6,24 @@ import (
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 )
 
-func (db Database) AddGame(game *models.Game, shareId string) error {
-	var id int
-	var ownerId int
+func (db Database) AddGame(game *models.Game, shareId string, gameId string) error {
+	var ownerId string
 	var name string
 	var description string
 	var createdAt string
 	err := db.Conn.QueryRow(
 		`
-			INSERT INTO games (owner_id, name, description, share_id)
-			VALUES ($1, $2, $3, $4)
+			INSERT INTO games (id, owner_id, name, description, share_id)
+			VALUES ($1, $2, $3, $4, $5)
 			RETURNING id, name, owner_id, description, created_at, share_id
 		`,
+		gameId,
 		game.OwnerId,
 		game.Name,
 		game.Description,
 		shareId,
 	).Scan(
-		&id,
+		&gameId,
 		&name,
 		&ownerId,
 		&description,
@@ -34,7 +34,7 @@ func (db Database) AddGame(game *models.Game, shareId string) error {
 		return err
 	}
 	// TODO: fix this so we dont have to set these props to access them in the client
-	game.Id = id
+	game.Id = gameId
 	game.CreatedAt = createdAt
 	game.ShareId = shareId
 	return nil
@@ -75,8 +75,22 @@ func (db Database) GetAllGames() (*models.GameList, error) {
 }
 
 // TODO: only game owners should be able to delete their own games
-func (db Database) DeleteGame(gameId int) error {
-	_, err := db.Conn.Exec(
+func (db Database) DeleteGame(gameId string) error {
+	// When we delete a game, we need to delete all the game players with it since they are in a one to many required relationship
+	var err error
+	_, err = db.Conn.Exec(
+		`
+			DELETE
+			FROM players
+			WHERE game_id = $1
+		`,
+		gameId,
+	)
+	if err != nil {
+		return err
+	}
+	// Then delete the game record
+	_, err = db.Conn.Exec(
 		`
 			DELETE
 			FROM games

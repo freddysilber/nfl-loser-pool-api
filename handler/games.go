@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/freddysilber/nfl-loser-pool-api/db"
 	"github.com/freddysilber/nfl-loser-pool-api/models"
@@ -34,11 +33,7 @@ func GameContext(next http.Handler) http.Handler {
 			render.Render(w, r, ErrorRenderer(fmt.Errorf("game ID is required")))
 			return
 		}
-		id, err := strconv.Atoi(gameId)
-		if err != nil {
-			render.Render(w, r, ErrorRenderer(fmt.Errorf("invalid game ID")))
-		}
-		ctx := context.WithValue(r.Context(), gameIdKey, id)
+		ctx := context.WithValue(r.Context(), gameIdKey, gameId)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -70,12 +65,16 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	gameId, err := gonanoid.New()
+	if err != nil {
+		return
+	}
 	game := &models.Game{}
 	if err := render.Bind(r, game); err != nil {
 		render.Render(w, r, ErrBadRequest)
 		return
 	}
-	if err := dbInstance.AddGame(game, id); err != nil {
+	if err := dbInstance.AddGame(game, id, gameId); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 		return
 	}
@@ -86,7 +85,7 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteGame(w http.ResponseWriter, r *http.Request) {
-	gameId := r.Context().Value(gameIdKey).(int)
+	gameId := r.Context().Value(gameIdKey).(string)
 	err := dbInstance.DeleteGame(gameId)
 	if err != nil {
 		if err == db.ErrNoMatch {

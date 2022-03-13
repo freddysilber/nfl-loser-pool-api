@@ -68,7 +68,7 @@ func (db Database) NewUser(user *models.User) error {
 	}
 	user.Password = hashedPassword
 
-	var id int
+	var id string
 
 	query := `INSERT INTO users (
 		name,
@@ -131,7 +131,7 @@ func (db Database) GetUserByUsername(user *models.User) (*models.User, error) {
 
 // Should we move this into under the 'User' handler???
 // ... We probably should ^^^ at some point
-func (db Database) GetGamesByUser(userId int) (*models.GameList, error) {
+func (db Database) GetGamesByUser(userId string) (*models.GameList, error) {
 	list := &models.GameList{}
 	games, err := db.Conn.Query(
 		`

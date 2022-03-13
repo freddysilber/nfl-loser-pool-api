@@ -1,18 +1,28 @@
-INSERT INTO "users" (name, username, password)
+INSERT INTO "users" (id, name, username, password)
 	VALUES (
+		'TPEoMpD1A4hAfi0VTGjmb',
 		'Mr Sir',
 		'mrsir',
 		'$2a$04$P4ouhozPJZX8NCCm7QyrIe1ZR46HNKL5tZgr0Yn4RCPyY85hnAM0m'
 	);
 
 INSERT INTO "items" (name, description, owner_id)
-	VALUES ('Item #1', 'Item #1 Created From Seed Script', 1);
+	VALUES ('Item #1', 'Item #1 Created From Seed Script', 'TPEoMpD1A4hAfi0VTGjmb');
 
 INSERT INTO "items" (name, description, owner_id)
-	VALUES ('Item #2', 'Item #2 Created From Seed Script', 1);
+	VALUES ('Item #2', 'Item #2 Created From Seed Script', 'TPEoMpD1A4hAfi0VTGjmb');
 
-INSERT INTO "games" (name, description, owner_id, share_id)
-	VALUES ('First Game', 'Game Description', 1, 'TPEoMpD1A4hAfi0VTGjmb');
+INSERT INTO "games" (id, name, description, owner_id, share_id)
+	VALUES (
+		'TPEoMpD1A4hAfi0VTGjma',
+		'First Game',
+		'Game Description',
+		'TPEoMpD1A4hAfi0VTGjmb',
+		'TPEoMpD1A4hAfi0VTGjmb'
+	);
 
 INSERT INTO "players" (game_id, player_id)
-	VALUES (1, 1)
+	VALUES (
+		'TPEoMpD1A4hAfi0VTGjma',
+		'TPEoMpD1A4hAfi0VTGjmb'
+	)
