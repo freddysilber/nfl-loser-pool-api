@@ -3,9 +3,9 @@ package models
 import "net/http"
 
 type Player struct {
-	Id       int `json:"id"`
-	GameId   int `json:"gameId"`
-	PlayerId int `json:"playerId"`
+	Id       string `json:"id"`
+	GameId   string `json:"gameId"`
+	PlayerId string `json:"playerId"`
 	// ?
 	// Realted User from 'player_id'
 	// User User `json:"user"`

@@ -18,11 +18,12 @@ INSERT INTO "games" (id, name, description, owner_id, share_id)
 		'First Game',
 		'Game Description',
 		'TPEoMpD1A4hAfi0VTGjmb',
-		'TPEoMpD1A4hAfi0VTGjmb'
+		'TPEoMpD1A4hAfi0VTGyyy'
 	);
 
-INSERT INTO "players" (game_id, player_id)
+INSERT INTO "players" (id, game_id, player_id)
 	VALUES (
+		'TPEoMpD1A4hAfi0VTGxxx',
 		'TPEoMpD1A4hAfi0VTGjma',
 		'TPEoMpD1A4hAfi0VTGjmb'
 	)

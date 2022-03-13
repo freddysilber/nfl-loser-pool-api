@@ -8,7 +8,7 @@ import (
 )
 
 // Gets all the 'Player' records from a game id
-func (db Database) GetGamePlayers(gameId int) (* models.PlayerList, error) {
+func (db Database) GetGamePlayers(gameId string) (* models.PlayerList, error) {
 	list := &models.PlayerList{}
 	players, err := db.Conn.Query(
 		`

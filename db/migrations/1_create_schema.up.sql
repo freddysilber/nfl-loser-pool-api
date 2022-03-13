@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS games(
 
 -- Create GamePlayer tables (join table to link players to games??)
 CREATE TABLE IF NOT EXISTS players(
-	id SERIAL PRIMARY KEY,
+	id VARCHAR(200) NOT NULL UNIQUE PRIMARY KEY,
 	game_id VARCHAR(200) NOT NULL REFERENCES games(id),
 	player_id VARCHAR(200) NOT NULL REFERENCES users(id)
 );

@@ -104,7 +104,7 @@ func getGamePlayers(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, UnAuthorized)
 	}
 
-	gameId := r.Context().Value(gameIdKey).(int)
+	gameId := r.Context().Value(gameIdKey).(string)
 	players, err := dbInstance.GetGamePlayers(gameId)
 	if err != nil {
 		render.Render(w, r, ServerErrorRenderer(err))
