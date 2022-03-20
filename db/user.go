@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/freddysilber/nfl-loser-pool-api/models"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -66,18 +67,27 @@ func (db Database) NewUser(user *models.User) error {
 	if err != nil {
 		return err
 	}
+	// Set hashed and salted password to the new user
 	user.Password = hashedPassword
 
-	var id string
+	// Create a custom 'nanoid' for the new user Id
+	id, err := gonanoid.New()
+	if err != nil {
+		return err
+	}
+	// Set the nanoid for the new user record
+	user.Id = id;
 
 	query := `INSERT INTO users (
+		id,
 		name,
 		username, 
 		password
-	) VALUES ($1, $2, $3) RETURNING id`
+	) VALUES ($1, $2, $3, $4) RETURNING id`
 
 	err = db.Conn.QueryRow(
 		query,
+		user.Id,
 		user.Name,
 		user.Username,
 		user.Password,

@@ -11,7 +11,6 @@ import (
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -81,13 +80,10 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 	// create jwt token
 	expirationTime := time.Now().Add(60 * time.Minute)
-	id, err := gonanoid.New()
-	if err != nil {
-		return
-	}
+
 	claims := &Claims{
 		Username: user.Username,
-		Id: id,
+		Id: user.Id,
 		Password: user.Password,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
