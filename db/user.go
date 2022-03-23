@@ -183,14 +183,14 @@ func hashAndSaltPassword(pwd []byte) (string, error) {
 	return string(hash), nil
 }
 
-func scanUsers(rows *sql.Rows) error {
-	var user models.User
-	return rows.Scan(
-		&user.Id,
-		&user.Username,
-		&user.Password,
-		&user.Name,
-		// &user.Roles,
-		&user.CreatedAt,
-	)
-}
+// func scanUsers(rows *sql.Rows) error {
+// 	var user models.User
+// 	return rows.Scan(
+// 		&user.Id,
+// 		&user.Username,
+// 		&user.Password,
+// 		&user.Name,
+// 		// &user.Roles,
+// 		&user.CreatedAt,
+// 	)
+// }

@@ -11,7 +11,7 @@ INSERT INTO "users" (id, name, username, password)
 INSERT INTO "users" (id, name, username, password)
 	VALUES (
 		'nF9Dvdr28Ds-XbeQib4Nz',
-		'Fred',
+		'fred',
 		'fredo',
 		'$2a$04$7ivgCT/hC7I24V0idCEppe8271qodQRtWVeMN/R9KtOS3iXo9qduW'
 	);
