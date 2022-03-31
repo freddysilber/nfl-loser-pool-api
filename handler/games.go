@@ -65,6 +65,7 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	// TODO: PULL THIS INTO A METHOD
 	gameId, err := gonanoid.New()
 	if err != nil {
 		return

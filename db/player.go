@@ -7,8 +7,30 @@ import (
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 )
 
+func (db Database) CreatePlayer(player *models.Player, playerId string) error {
+	var gameId string
+	err := db.Conn.QueryRow(
+		`
+			INSERT INTO players (id, game_id, player_id)
+			VALUES ($1, $2, $3)
+			RETURNING id, game_id, player_id
+		`,
+		gameId,
+		playerId,
+	).Scan(
+		&gameId,
+		&playerId,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Gets all the 'Player' records from a game id
-func (db Database) GetGamePlayers(gameId string) (* models.PlayerList, error) {
+func (db Database) GetGamePlayers(gameId string) (*models.PlayerList, error) {
 	list := &models.PlayerList{}
 	players, err := db.Conn.Query(
 		`

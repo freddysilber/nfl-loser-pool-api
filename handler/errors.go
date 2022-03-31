@@ -13,6 +13,7 @@ type ErrorResponse struct {
 	Message    string `json:"message"`
 }
 
+// Add any error codes here
 var (
 	ErrMethodNotAllowed = &ErrorResponse{StatusCode: 405, Message: "Method not allowed, (405)"}
 	ErrNotFound         = &ErrorResponse{StatusCode: 404, Message: "Error! Resource not found. (404)"}
