@@ -3,5 +3,10 @@ node_modules
 .git
 .github
 
+
 # OS
+
+# DS_Store makes a huge improvement in build time when ignored...
+
+# If your not on Mac, feel free to add your OS here and remove these comments
 .DS_Store
