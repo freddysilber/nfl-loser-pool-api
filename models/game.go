@@ -6,10 +6,10 @@ import (
 )
 
 type Game struct {
-	Id          string    `json:"id"`
+	Id          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	OwnerId     string    `json:"ownerId"`
+	OwnerId     string `json:"ownerId"`
 	CreatedAt   string `json:"createdAt"`
 	ShareId     string `json:"shareId"`
 }

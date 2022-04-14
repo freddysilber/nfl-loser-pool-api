@@ -78,12 +78,15 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// create jwt token
+	/* 
+	Create jwt token
+	- Token will expire when created plus 60 mins
+	*/
 	expirationTime := time.Now().Add(60 * time.Minute)
 
 	claims := &Claims{
-		Username: user.Username,
 		Id: user.Id,
+		Username: user.Username,
 		Password: user.Password,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),

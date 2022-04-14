@@ -13,6 +13,7 @@ import (
 )
 
 type itemIdKeyString string
+
 var itemIdKey itemIdKeyString = "itemID"
 
 func items(router chi.Router) {
