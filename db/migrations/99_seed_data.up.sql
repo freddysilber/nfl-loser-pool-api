@@ -17,11 +17,11 @@ INSERT INTO "users" (id, name, username, password)
 	);
 
 
-INSERT INTO "items" (name, description, owner_id)
-	VALUES ('Item #1', 'Item #1 Created From Seed Script', 'TPEoMpD1A4hAfi0VTGjmb');
+-- INSERT INTO "items" (name, description, owner_id)
+-- 	VALUES ('Item #1', 'Item #1 Created From Seed Script', 'TPEoMpD1A4hAfi0VTGjmb');
 
-INSERT INTO "items" (name, description, owner_id)
-	VALUES ('Item #2', 'Item #2 Created From Seed Script', 'TPEoMpD1A4hAfi0VTGjmb');
+-- INSERT INTO "items" (name, description, owner_id)
+-- 	VALUES ('Item #2', 'Item #2 Created From Seed Script', 'TPEoMpD1A4hAfi0VTGjmb');
 
 
 INSERT INTO "games" (id, name, description, owner_id, share_id)
@@ -31,6 +31,15 @@ INSERT INTO "games" (id, name, description, owner_id, share_id)
 		'Game Description',
 		'TPEoMpD1A4hAfi0VTGjmb',
 		'TPEoMpD1A4hAfi0VTGyyy'
+	);
+
+INSERT INTO "games" (id, name, description, owner_id, share_id)
+	VALUES (
+		'2',
+		'SEED: First Game - user = Fred',
+		'Game Description',
+		'nF9Dvdr28Ds-XbeQib4Nz',
+		'nF9Dvdr28Ds-XbeQib4N6'
 	);
 
 
