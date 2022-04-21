@@ -27,7 +27,7 @@ INSERT INTO "items" (name, description, owner_id)
 INSERT INTO "games" (id, name, description, owner_id, share_id)
 	VALUES (
 		'TPEoMpD1A4hAfi0VTGjma',
-		'First Game',
+		'SEED: First Game',
 		'Game Description',
 		'TPEoMpD1A4hAfi0VTGjmb',
 		'TPEoMpD1A4hAfi0VTGyyy'
