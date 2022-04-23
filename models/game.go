@@ -18,6 +18,11 @@ type GameList struct {
 	Games []Game `json:"games"`
 }
 
+type GamePayLoad struct {
+	Game Game `json:"game"`
+	Players UserList `json:"players"`
+}
+
 func (g *Game) Bind(r *http.Request) error {
 	if g.Name == "" {
 		return fmt.Errorf("name is a required field")
@@ -30,5 +35,9 @@ func (*GameList) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (*Game) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (*GamePayLoad) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }

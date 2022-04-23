@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 )
@@ -105,4 +106,40 @@ func (db Database) DeleteGame(gameId string) error {
 	default:
 		return err
 	}
+}
+
+func (db Database) GetGame(gameId string) (*models.Game, error) {
+	game := &models.Game{}
+	row := db.Conn.QueryRow(
+		`
+			SELECT * FROM games WHERE id = $1
+		`,
+		gameId,
+	)
+	switch err := row.Scan(
+		&game.Id,
+		&game.Name,
+		&game.Description,
+		&game.CreatedAt,
+		&game.OwnerId,
+		&game.ShareId,
+	); err {
+	case sql.ErrNoRows:
+		return game, ErrNoMatch
+	default:
+		return game, err
+	}
+}
+
+func (db Database) GetGamePayload(gameId string) (*models.GamePayLoad, error) {
+	game, err := db.GetGame(gameId);
+	players, err := db.GetGamePlayers(gameId)
+
+	fmt.Println(players)
+
+	payload := models.GamePayLoad{}
+	payload.Game = *game
+	payload.Players = *players
+
+	return &payload, err
 }

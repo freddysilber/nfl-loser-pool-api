@@ -2,9 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 )
@@ -35,47 +33,29 @@ func (db Database) CreatePlayer(player *models.Player, id string) error {
 	return nil
 }
 
-// Gets all the 'Player' records from a game id
-func (db Database) GetGamePlayers(gameId string) (*models.PlayerList, error) {
-	list := &models.PlayerList{}
-	players, err := db.Conn.Query(
+// Gets all the users from the player records for a given game
+func (db Database) GetGamePlayers(gameId string) (*models.UserList, error) {
+	list := &models.UserList{}
+	users, err := db.Conn.Query(
 		`
 			SELECT
-				p.id,
-				p.game_id,
-				p.player_id,
 				u.id,
-				u.name,
-				u.username
-			FROM players p
-			INNER JOIN users u
-			ON u.id = p.player_id
+				name,
+				username
+			FROM users u
+			JOIN players p ON p.player_id = u.id
 			WHERE p.game_id = $1
 		`,
 		gameId,
 	)
-	// players, err := db.Conn.Query(
-	// 	`
-	// 		SELECT *
-	// 		FROM players
-	// 		WHERE game_id = $1
-	// 	`,
-	// 	gameId,
-	// )
-	log.Println(list)
-	log.Println(json.Marshal(list))
 
 	if err != nil {
 		return list, err
 	}
 
-	for players.Next() {
-		var player models.Player
+	for users.Next() {
 		var user models.User
-		err := players.Scan(
-			&player.Id,
-			&player.GameId,
-			&player.PlayerId,
+		err := users.Scan(
 			&user.Id,
 			&user.Name,
 			&user.Username,
@@ -83,7 +63,7 @@ func (db Database) GetGamePlayers(gameId string) (*models.PlayerList, error) {
 		if err != nil {
 			return list, err
 		}
-		list.Players = append(list.Players, player)
+		list.Users = append(list.Users, user)
 	}
 
 	return list, nil

@@ -22,7 +22,9 @@ func games(router chi.Router) {
 	router.Route("/{gameId}", func(router chi.Router) {
 		router.Use(GameContext)
 		router.Delete("/", deleteGame)
+		router.Get("/", getGame)
 		router.Get("/players", getGamePlayers)
+		router.Get("/payload", getGamePayload)
 	})
 }
 
@@ -61,7 +63,7 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, UnAuthorized)
 	}
 	// Create a random game id / uuid
-	id, err := gonanoid.New()
+	shareId, err := gonanoid.New()
 	if err != nil {
 		return
 	}
@@ -75,7 +77,7 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ErrBadRequest)
 		return
 	}
-	if err := dbInstance.AddGame(game, id, gameId); err != nil {
+	if err := dbInstance.AddGame(game, shareId, gameId); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 		return
 	}
@@ -99,7 +101,6 @@ func deleteGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func getGamePlayers(w http.ResponseWriter, r *http.Request) {
-	// TODO this pops up in muliple places, so we should find a solution to remove this block
 	_, err := ValidateSession(w, r)
 	if err != nil {
 		render.Render(w, r, UnAuthorized)
@@ -112,6 +113,28 @@ func getGamePlayers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := render.Render(w, r, players); err != nil {
+		render.Render(w, r, ErrorRenderer(err))
+	}
+}
+
+func getGame(w http.ResponseWriter, r *http.Request) {
+	gameId := r.Context().Value(gameIdKey).(string)
+	fmt.Println("Get Game ", gameId)
+}
+
+func getGamePayload(w http.ResponseWriter, r *http.Request) {
+	_, err := ValidateSession(w, r)
+	if err != nil {
+		render.Render(w, r, UnAuthorized)
+	}
+
+	gameId := r.Context().Value(gameIdKey).(string)
+	payload, err := dbInstance.GetGamePayload(gameId)
+	if err != nil {
+		render.Render(w, r, ServerErrorRenderer(err))
+	}
+
+	if err := render.Render(w, r, payload); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 	}
 }
