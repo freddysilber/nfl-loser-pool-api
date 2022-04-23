@@ -22,25 +22,12 @@ func getAllPlayers(w http.ResponseWriter, r *http.Request) {
 }
 
 func createPlayer(w http.ResponseWriter, r *http.Request) {
-	/*
-		TODO: !! WE SERIOUSLY NEED TO FIND A WAY TO ABSTRACT THIS!!
-		Take care of our user validation
-	*/
-	user, err := ValidateSession(w, r)
+	_, err := ValidateSession(w, r)
 	if err != nil {
 		render.Render(w, r, UnAuthorized)
 	}
 
-	// TODO: User Id and Game Id need to be required!!
-	log.Println("create player, we are valid")
-	log.Println("here is the valid user: ", user)
-	log.Println(user.Id)
-	log.Println(user.Name)
-	log.Println(user.Username)
-	log.Println(user.Password)
-
-	// TODO: PULL THIS INTO A METHOD
-	playerId, err := gonanoid.New()
+	id, err := gonanoid.New()
 	if err != nil {
 		return
 	}
@@ -52,10 +39,12 @@ func createPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := dbInstance.CreatePlayer(player, playerId); err != nil {
-		log.Println(w)
-		log.Println(r)
-		log.Println("bro")
+	if dbInstance.GetExistingPlayer(player) {
+		render.Render(w, r, &ErrorResponse{StatusCode: 405, Message: "There is already a player for this user and game"})
+		return
+	}
+
+	if err := dbInstance.CreatePlayer(player, id); err != nil {
 		render.Render(w, r, ErrorRenderer(err))
 		return
 	}

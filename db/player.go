@@ -1,23 +1,29 @@
 package db
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/freddysilber/nfl-loser-pool-api/models"
 )
 
-func (db Database) CreatePlayer(player *models.Player, playerId string) error {
+func (db Database) CreatePlayer(player *models.Player, id string) error {
 	var gameId string
+	var playerId string
+
 	err := db.Conn.QueryRow(
 		`
 			INSERT INTO players (id, game_id, player_id)
 			VALUES ($1, $2, $3)
 			RETURNING id, game_id, player_id
 		`,
-		gameId,
-		playerId,
+		id,
+		player.GameId,
+		player.PlayerId,
 	).Scan(
+		&id,
 		&gameId,
 		&playerId,
 	)
@@ -81,4 +87,27 @@ func (db Database) GetGamePlayers(gameId string) (*models.PlayerList, error) {
 	}
 
 	return list, nil
+}
+
+// Check the db to see if the new player already exists
+func (db Database) GetExistingPlayer(player *models.Player) bool {
+	var gameId string
+	var playerId string
+
+	row := db.Conn.QueryRow(
+		`SELECT p.game_id, p.player_id FROM players p WHERE p.game_id = $1 AND p.player_id = $2`,
+		player.GameId,
+		player.PlayerId,
+	)
+
+	fmt.Println("row ")
+
+	switch err := row.Scan(&gameId, &playerId); err {
+	case sql.ErrNoRows:
+		return false
+	case nil:
+		return true
+	default:
+		return false
+	}
 }

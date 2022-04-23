@@ -35,7 +35,7 @@ INSERT INTO "games" (id, name, description, owner_id, share_id)
 
 INSERT INTO "games" (id, name, description, owner_id, share_id)
 	VALUES (
-		'2',
+		'TPEoMpD1A4hAfi0VTGjml',
 		'SEED: First Game - user = Fred',
 		'Game Description',
 		'nF9Dvdr28Ds-XbeQib4Nz',
