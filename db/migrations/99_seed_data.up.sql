@@ -50,12 +50,12 @@ INSERT INTO "players" (id, game_id, player_id)
 		'TPEoMpD1A4hAfi0VTGjmb'
 	);
 
-INSERT INTO "picks" (id, game_id, player_id, week, team_id, bonus_point)
+INSERT INTO "picks" (id, game_id, player_id, team_id, week, bonus_point)
 	VALUES (
 		'TPEoMpD1A4hAfi0VTGABC',
 		'TPEoMpD1A4hAfi0VTGjma',
 		'TPEoMpD1A4hAfi0VTGjmb',
-		1,
 		12,
+		4,
 		-7
 	);

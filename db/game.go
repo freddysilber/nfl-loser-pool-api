@@ -134,12 +134,14 @@ func (db Database) GetGame(gameId string) (*models.Game, error) {
 func (db Database) GetGamePayload(gameId string) (*models.GamePayLoad, error) {
 	game, err := db.GetGame(gameId);
 	players, err := db.GetGamePlayers(gameId)
+	picks, err := db.GetGamePicks(gameId)
 
 	fmt.Println(players)
 
 	payload := models.GamePayLoad{}
 	payload.Game = *game
 	payload.Players = *players
+	payload.Picks = *picks
 
 	return &payload, err
 }

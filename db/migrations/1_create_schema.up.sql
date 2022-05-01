@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS picks(
 	id TEXT NOT NULL UNIQUE PRIMARY KEY,
 	game_id TEXT NOT NULL REFERENCES games(id),
 	player_id TEXT NOT NULL REFERENCES users(id),
-	week INT NOT NULL,
 	team_id INT NOT NULL,
+	week INT NOT NULL,
 	bonus_point INT
 )

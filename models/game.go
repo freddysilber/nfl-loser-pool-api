@@ -19,8 +19,9 @@ type GameList struct {
 }
 
 type GamePayLoad struct {
-	Game Game `json:"game"`
+	Game    Game     `json:"game"`
 	Players UserList `json:"players"`
+	Picks   PickList `json:"picks"`
 }
 
 func (g *Game) Bind(r *http.Request) error {

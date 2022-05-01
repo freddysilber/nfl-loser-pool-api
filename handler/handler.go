@@ -36,6 +36,7 @@ func NewHandler(db db.Database) http.Handler {
 	router.Route("/session", session)
 	router.Route("/games", games)
 	router.Route("/players", players)
+	router.Route("/picks", picks)
 	return router
 }
 
