@@ -45,3 +45,12 @@ CREATE TABLE IF NOT EXISTS players(
 	game_id VARCHAR(200) NOT NULL REFERENCES games(id),
 	player_id VARCHAR(200) NOT NULL REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS picks(
+	id TEXT NOT NULL UNIQUE PRIMARY KEY,
+	game_id TEXT NOT NULL REFERENCES games(id),
+	player_id TEXT NOT NULL REFERENCES users(id),
+	week INT NOT NULL,
+	team_id INT NOT NULL,
+	bonus_point INT
+)
